@@ -155,6 +155,14 @@ class GameEngine extends React.Component {
         }
     }
 
+    checkGubbeVsBullet = () => {
+        if (this.state.gubbeX === this.state.bulletX && this.state.gubbeY === this.state.bulletY) {
+            if (!this.state.inventory.includes('shield')) {
+                this.gubbeDied();
+            }
+        }
+    }
+
     removeLaser = () => {
         const level = this.state.currentLevel.map((line, y) => line.map((block, x) => {
             if (block === 15) return 0;
@@ -404,13 +412,6 @@ class GameEngine extends React.Component {
         this.setState({ zombies: newZombies });
     }
 
-    checkGubbeVsBullet = () => {
-        if (this.state.gubbeX === this.state.bulletX && this.state.gubbeY === this.state.bulletY) {
-            if (!this.state.inventory.includes('shield')) {
-                this.gubbeDied();
-            }
-        }
-    }
     gunMove = () => {
         if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0) return;
         if (this.state.bulletMoving === false) {
