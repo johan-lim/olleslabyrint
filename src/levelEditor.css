@@ -1,0 +1,35 @@
+.level-editor {
+    display: flex;
+    flex-direction: column;
+}
+.level-editor .blocks-picker {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+h3 {
+    margin: 0;
+    margin-right: 2rem;
+}
+
+.show-level-code {
+    position: absolute;
+    left: 70%;
+    top: 50%;
+    font-family: monospace;
+    font-size: .4em;
+    display: flex;
+    width: 10%;
+}
+.exitorandpreview {
+    display: flex;
+    flex-direction: column;
+}
+.preview-level {
+    display: block;
+    position: absolute;
+    top: 300px;
+    width: 20%;
+    height: 70vh;
+}

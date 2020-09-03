@@ -1,0 +1,135 @@
+.key {
+    margin-top: 3%;
+    margin-left: 2%;
+    width: 8%;
+}
+
+header span .key {
+    width: 20px;
+    height: 10px;
+    margin: 0;
+}
+
+.portal {
+    width: 8%;
+    margin-top:1%;
+    margin-left: 3%;
+    animation-name: spin;
+    animation-duration: 5000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.skott {
+    margin-left: 5%;
+    width: 1.5%;
+    height: 2%;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes pulsate {
+    0% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgb(146, 41, 191);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes bomb_glow {
+    0% {
+        border: 2px dashed transparent;
+    }
+    50% {
+        border: 2px dashed white;
+    }
+    100% {
+        border: 2px dashed transparent;
+    }
+}
+
+.coin {
+    width: 6%;
+    height: 5%;
+    margin-left: 4%;
+}
+
+.powerup {
+    width: 9%;
+    height: 6%;
+    margin-left: 1%;
+}
+
+.door {
+    margin-top: 4%;
+    width: 12%;
+    transition: 1s ease-in-out;
+}
+.door.open {
+    margin-top: 6%;
+    transform: rotate(45deg);
+}
+
+.block {
+    width: 12%;
+    height: 7%;
+    transition: .5s ease-in-out;
+}
+
+.shield {
+    width: 12%;
+    height: 6%;
+    margin-top: 1%;
+}
+
+.bomb {
+    margin-top: 1%;
+    margin-left: 2%;
+    width: 8%;
+    height: 5%;
+    border: 2px dashed transparent;
+}
+
+.bomb.active {
+    animation-name: bomb_glow;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transition: .5s ease-in-out;
+}
+
+.laser {
+    width: 4%;
+    margin-left: 4%;
+    animation-name: pulsate;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    transition: .5s ease-in-out;
+}
+
+.button {
+    width: 8%;
+    height: 3%;
+    margin-left: 2%;
+    margin-top: 0%;
+}
+
+
+.cannon {
+    width: 8%;
+    height: 5%;
+    margin-left: 2%;
+    margin-top: 0%;
+}

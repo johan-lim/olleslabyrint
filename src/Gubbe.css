@@ -1,0 +1,15 @@
+.gubbe {
+    position: absolute;
+}
+
+.hasShield {
+    border: 3px dashed brown;
+}
+
+.zombie {
+    transition: .5s ease-in-out;
+}
+
+.skott {
+    transition: .2s ease-in-out;
+}

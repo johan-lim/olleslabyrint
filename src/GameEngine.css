@@ -1,0 +1,39 @@
+.pixelated {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
+}
+
+.info_message {
+    position: fixed;
+    left: 40vw;
+    top: 44vh;
+    width: 250px;
+}
+
+.App header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.App header h5 {
+    margin: 3px;
+}
+
+.App header .info {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.level {
+    display: flex;
+    position: absolute;
+    width: 33vw;
+    height: 90%;
+    left: 0;
+}
