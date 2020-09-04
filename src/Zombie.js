@@ -1,5 +1,6 @@
 import React from 'react';
 import zombieImage from './assets/zombie.png';
+import lavaMonsterImage from './assets/lavamonster.png';
 import './Gubbe.css';
 
 function Zombie(props) {
@@ -42,7 +43,7 @@ function Zombie(props) {
     const viewDistanceY = Math.abs(props.gubbeY - props.zombieY);
 
     return (
-        <img alt="" src={zombieImage} className="pixelated gubbe zombie" style={props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 7 : 4) && viewDistanceY < (hasFackla ? 7 : 4)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt(props.zombieY * 7)}%`, left: `${parseInt(props.zombieX * 12)}%`, width: '13%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
+        <img alt="" src={props.isMonster ? lavaMonsterImage : zombieImage} className="pixelated gubbe zombie" style={props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 7 : 4) && viewDistanceY < (hasFackla ? 7 : 4)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt(props.zombieY * 7)}%`, left: `${parseInt(props.zombieX * 12)}%`, width: '13%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
     );
 }
 

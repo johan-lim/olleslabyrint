@@ -37,7 +37,10 @@ class GameEngine extends React.Component {
             music: false,
             soundEffects: true,
             currentLevel: levels[0].blocks,
-            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
+            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
+                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                .concat(this.getIndexOfK(levels[0].blocks, 23).map(z =>
+                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
             bulletX: null,
@@ -49,7 +52,10 @@ class GameEngine extends React.Component {
         this.setState({
             ...initialState,
             currentLevel: levels[this.state.level].blocks,
-            zombies: this.getIndexOfK(levels[this.state.level].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
+            zombies: this.getIndexOfK(levels[this.state.level].blocks, 21).map(z =>
+                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                .concat(this.getIndexOfK(levels[this.state.level].blocks, 23).map(z =>
+                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
             bulletX: null,
@@ -66,8 +72,10 @@ class GameEngine extends React.Component {
             music: false,
             soundEffects: true,
             currentLevel: levels[0].blocks,
-            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
-            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
+            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
+                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                .concat(this.getIndexOfK(levels[0].blocks, 23).map(z =>
+                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
             bulletX: null,
             bulletY: null
@@ -481,6 +489,7 @@ class GameEngine extends React.Component {
                 hasFackla={this.state.inventory.includes('fackla')}
                 zombieX={z.zombieX}
                 zombieY={z.zombieY}
+                isMonster={z.isMonster}
                 gubbeX={this.state.gubbeX}
                 gubbeY={this.state.gubbeY}
                 zombieDirection={z.zombieDirection} />)

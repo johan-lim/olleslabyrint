@@ -49,6 +49,9 @@ export default function LevelEditor(props) {
                 <div onClick={() => setCurrentBlock(21)} className="editor-block" style={currentBlock === 21 ? {border: '2px solid white'} : {}}>
                     <Zombie />
                 </div>
+                <div onClick={() => setCurrentBlock(23)} className="editor-block" style={currentBlock === 23 ? {border: '2px solid white'} : {}}>
+                    <Zombie isMonster />
+                </div>
             </div>
             <div className="exitorandpreview">
                 <div className="preview-level">
