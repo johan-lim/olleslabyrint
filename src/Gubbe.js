@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import gubbeImage from './assets/gubbe.png';
+import gubbeFacklaImage from './assets/gubbe-fackla.png';
 import './Gubbe.css';
 
 function Gubbe(props) {
@@ -29,7 +30,7 @@ function Gubbe(props) {
     });
 
     return (
-        <img src={gubbeImage} className={gubbeClasses} style={props.gubbeX ? { top: `${parseInt(props.gubbeY * 7)}%`, left: `${parseInt(props.gubbeX * 12)}%`, width: '13%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'}} />
+        <img alt="" src={props.hasFackla ? gubbeFacklaImage : gubbeImage} className={gubbeClasses} style={props.gubbeX ? { top: `${parseInt(props.gubbeY * 7)}%`, left: `${parseInt(props.gubbeX * 12)}%`, width: '13%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'}} />
     );
 }
 

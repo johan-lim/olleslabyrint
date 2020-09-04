@@ -18,6 +18,7 @@ import laser from './assets/laser.png';
 import button from './assets/knapp.png';
 import bomb from './assets/bomb.png';
 import hacka from './assets/hacka.png';
+import fackla from './assets/fackla.png';
 import './block.css';
 
 function Block(props) {
@@ -33,9 +34,10 @@ function Block(props) {
         cannon: props.block === 14,
         laser: props.block === 15,
         button: props.block === 16,
+        fackla: props.block === 22,
         bomb: props.block === 17,
         active: props.bombActive,
-        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19].includes(props.block),
+        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19, 22].includes(props.block),
         open: props.doorOpen
     });
 
@@ -50,9 +52,15 @@ function Block(props) {
         5: .3,
         6: .1,
         7: .07,
-        8: .03
+        8: .03,
+        9: .01,
+        10: .01,
+        11: .01,
+        12: .005
     };
-    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < 5 && viewDistanceY < 5 ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 7)}%`, left: `${parseInt(props.x * 12)}%`} : { width: '50px', height: '50px'};
+
+    const hasFackla = props.hasFackla;
+    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < (hasFackla ? 7 : 4) && viewDistanceY < (hasFackla ? 7 : 4) ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 7)}%`, left: `${parseInt(props.x * 12)}%`} : { width: '50px', height: '50px'};
     switch(props.block) {
         case 1:
             block = <img alt="" src={blockImage} className={blockClasses} style={blockStyle} />;
@@ -110,6 +118,10 @@ function Block(props) {
             break;
         case 19:
             block = <img alt="" src={hacka} className={blockClasses} style={blockStyle} />;
+            break;
+        case 22:
+            block = <img alt="" src={fackla} className={blockClasses} style={blockStyle} />;
+            break;
         default:
             break;
     }

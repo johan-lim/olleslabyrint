@@ -7,9 +7,10 @@ import Block from './Block';
 import nyckelImage from './assets/nyckel.png';
 import shieldImage from './assets/sköld.png';
 import hackaImage from './assets/hacka.png';
+import facklaImage from './assets/fackla.png';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
-import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion } from './Audio';
+import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire } from './Audio';
 import levels from '../src/Levels';
 
 const initialState = {
@@ -30,15 +31,15 @@ class GameEngine extends React.Component {
         super(props);
         this.state = { 
             ...initialState,
-            level: 3,
+            level: 0,
             points: 0,
             lives: 3,
             music: false,
             soundEffects: true,
-            currentLevel: levels[3].blocks,
-            zombies: this.getIndexOfK(levels[3].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
-            gubbeX: this.getIndexOfK(levels[3].blocks, 20)[0][1],
-            gubbeY: this.getIndexOfK(levels[3].blocks, 20)[0][0],
+            currentLevel: levels[0].blocks,
+            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
+            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
+            gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
             bulletX: null,
             bulletY: null
         };
@@ -108,6 +109,10 @@ class GameEngine extends React.Component {
     keyBoard = (e) => {
         if (e.keyCode === 69) {
             this.props.gotoEditor();
+        } else if (e.keyCode === 74){
+            this.setState({ level: this.state.level + 1 }, () => {
+                this.reset();
+            });
         } else {
             this.moveGubbe(e.keyCode - 37);
         }
@@ -296,6 +301,14 @@ class GameEngine extends React.Component {
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
+            if (this.checkGubbeCollision(direction) === 22) {
+                this.setState({ inventory: [...this.state.inventory, 'fackla'], points: this.state.points + 5 });
+                setTimeout(() => {
+                    this.setState({ inventory: this.state.inventory.filter(item => item !== 'fackla')});
+                }, 15000);
+                this.setBoardXYAs(0);
+                this.playSoundEffect(fire);
+            }
             if (this.checkGubbeCollision(direction) === 9 && this.state.inventory.includes('hacka')) {
                 this.setState({ hackaHealth: this.state.hackaHealth - 1 }, () => {
                     if (this.state.hackaHealth < 1) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
@@ -452,15 +465,25 @@ class GameEngine extends React.Component {
                 x={x}
                 y={y}
                 block={block}
+                hasFackla={this.state.inventory.includes('fackla')}
                 gubbeX={this.state.gubbeX}
                 gubbeY={this.state.gubbeY} 
             />));
         const inventory = {
             'key': <img key="key" alt="" className="key" src={nyckelImage}/>,
             'shield': <img key="shield" alt="" className="key" src={shieldImage}/>,
-            'hacka': <img key="shield" alt="" className="key" src={hackaImage}/>
+            'hacka': <img key="shield" alt="" className="key" src={hackaImage}/>,
+            'fackla': <img key="shield" alt="" className="key" src={facklaImage}/>
         };
-        const zombies = this.state.zombies.map((z, i) => <Zombie key={i} zombieX={z.zombieX} zombieY={z.zombieY} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} zombieDirection={z.zombieDirection} />)
+        const zombies = this.state.zombies.map((z, i) => 
+            <Zombie
+                key={i}
+                hasFackla={this.state.inventory.includes('fackla')}
+                zombieX={z.zombieX}
+                zombieY={z.zombieY}
+                gubbeX={this.state.gubbeX}
+                gubbeY={this.state.gubbeY}
+                zombieDirection={z.zombieDirection} />)
         return (
             <div className="App">
                 <header>
@@ -485,7 +508,12 @@ class GameEngine extends React.Component {
                 </header>
                 <div className="level">
                     {level}
-                    <Gubbe gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} gubbeDirection={this.state.gubbeDirection} hasShield={this.state.inventory.includes('shield')} />
+                    <Gubbe
+                        gubbeX={this.state.gubbeX}
+                        gubbeY={this.state.gubbeY}
+                        gubbeDirection={this.state.gubbeDirection}
+                        hasFackla={this.state.inventory.includes('fackla')}
+                        hasShield={this.state.inventory.includes('shield')} />
                     {zombies}
                     {this.state.bulletMoving && <Skott gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={this.state.bulletX} skottY={this.state.bulletY} />}
                 </div>

@@ -13,7 +13,7 @@ import noKeyAudio from './assets/sounds/no_key.ogg';
 import bombAudio from './assets/sounds/bomb.ogg';
 import explosionAudio from './assets/sounds/explosion.ogg';
 import playAudio from './assets/sounds/play.ogg';
-
+import fireAudio from './assets/sounds/fire.ogg';
 
 export const gubbeDie = new Audio(gubbeDieAudio);
 export const peng = new Audio(pengAudio);
@@ -29,6 +29,7 @@ export const endMusic = new Audio(endMusicAudio);
 export const bomb = new Audio(bombAudio);
 export const explosion = new Audio(explosionAudio);
 export const play = new Audio(playAudio);
+export const fire = new Audio(fireAudio);
 
 
 music.addEventListener('timeupdate', function(){
