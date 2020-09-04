@@ -6,6 +6,7 @@ import Zombie from './Zombie';
 import Block from './Block';
 import nyckelImage from './assets/nyckel.png';
 import shieldImage from './assets/sköld.png';
+import hackaImage from './assets/hacka.png';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
 import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion } from './Audio';
@@ -18,6 +19,7 @@ const initialState = {
     gubbeLocked: false,
     inventory: [],
     doorOpen: false,
+    hackaHealth: 5,
     bombActive: false,
     message: '',
     bulletMoving: false
@@ -28,15 +30,15 @@ class GameEngine extends React.Component {
         super(props);
         this.state = { 
             ...initialState,
-            level: 0,
+            level: 3,
             points: 0,
             lives: 3,
             music: false,
             soundEffects: true,
-            currentLevel: levels[0].blocks,
-            zombies: this.getIndexOfK(levels[0].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
-            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
-            gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
+            currentLevel: levels[3].blocks,
+            zombies: this.getIndexOfK(levels[3].blocks, 21).map(z => ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 })),
+            gubbeX: this.getIndexOfK(levels[3].blocks, 20)[0][1],
+            gubbeY: this.getIndexOfK(levels[3].blocks, 20)[0][0],
             bulletX: null,
             bulletY: null
         };
@@ -289,6 +291,18 @@ class GameEngine extends React.Component {
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
+            if (this.checkGubbeCollision(direction) === 19) {
+                this.setState({ inventory: [...this.state.inventory, 'hacka'], points: this.state.points + 5, hackaHealth: 5 });
+                this.setBoardXYAs(0);
+                this.playSoundEffect(key);
+            }
+            if (this.checkGubbeCollision(direction) === 9 && this.state.inventory.includes('hacka')) {
+                this.setState({ hackaHealth: this.state.hackaHealth - 1 }, () => {
+                    if (this.state.hackaHealth < 1) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
+                });
+                this.setBoardXYAs(0);
+                this.playSoundEffect(explosion);
+            }
             if (this.checkGubbeCollision(direction) === 11) {
                 this.setState({ points: this.state.points + 3 });
                 this.setBoardXYAs(0);
@@ -343,22 +357,22 @@ class GameEngine extends React.Component {
         });
         switch (direction) {
             case 0:
-                if (![1, 4, 5, 6, 7, 8, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
+                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
                     this.setState({ gubbeX: this.state.gubbeX - 1 });
                 }
                 break;
             case 1:
-                if (![1, 4, 5, 6, 7, 8, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
+                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
                     this.setState({ gubbeY: this.state.gubbeY - 1 });                    
                 }
                 break;
             case 2:
-                if (![1, 4, 5, 6, 7, 8, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < 23) {
+                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < 23) {
                     this.setState({ gubbeX: this.state.gubbeX + 1 });
                 }
                 break;
             case 3:
-                if (![1, 4, 5, 6, 7, 8, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < 10) {
+                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < 10) {
                     this.setState({ gubbeY: this.state.gubbeY + 1 });
                 }
                 break;
@@ -443,7 +457,8 @@ class GameEngine extends React.Component {
             />));
         const inventory = {
             'key': <img key="key" alt="" className="key" src={nyckelImage}/>,
-            'shield': <img key="shield" alt="" className="key" src={shieldImage}/>
+            'shield': <img key="shield" alt="" className="key" src={shieldImage}/>,
+            'hacka': <img key="shield" alt="" className="key" src={hackaImage}/>
         };
         const zombies = this.state.zombies.map((z, i) => <Zombie key={i} zombieX={z.zombieX} zombieY={z.zombieY} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} zombieDirection={z.zombieDirection} />)
         return (

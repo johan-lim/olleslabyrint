@@ -17,6 +17,7 @@ import cannon2 from './assets/kanon2.png';
 import laser from './assets/laser.png';
 import button from './assets/knapp.png';
 import bomb from './assets/bomb.png';
+import hacka from './assets/hacka.png';
 import './block.css';
 
 function Block(props) {
@@ -34,7 +35,7 @@ function Block(props) {
         button: props.block === 16,
         bomb: props.block === 17,
         active: props.bombActive,
-        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18].includes(props.block),
+        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19].includes(props.block),
         open: props.doorOpen
     });
 
@@ -44,67 +45,71 @@ function Block(props) {
     const distanceToOpacity = {
         1: 1,
         2: .9,
-        3: .8,
-        4: .7,
-        5: .6,
-        6: .3,
-        7: .1,
+        3: .7,
+        4: .6,
+        5: .3,
+        6: .1,
+        7: .07,
+        8: .03
     };
-    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < 4 && viewDistanceY < 4 ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 7)}%`, left: `${parseInt(props.x * 12)}%`} : { width: '50px', height: '50px'};
+    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < 5 && viewDistanceY < 5 ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 7)}%`, left: `${parseInt(props.x * 12)}%`} : { width: '50px', height: '50px'};
     switch(props.block) {
         case 1:
-            block = <img src={blockImage} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={blockImage} className={blockClasses} style={blockStyle} />;
             break;
         case 2:
-            block = <img src={nyckelImage} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={nyckelImage} className={blockClasses} style={blockStyle} />;
             break;
         case 3:
-            block = <img src={dörrImage} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={dörrImage} className={blockClasses} style={blockStyle} />;
             break;
         case 4:
-            block = <img src={block2Image} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={block2Image} className={blockClasses} style={blockStyle} />;
             break;
         case 5:
-            block = <img src={block3Image} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={block3Image} className={blockClasses} style={blockStyle} />;
             break;
         case 6:
-            block = <img src={block4Image} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={block4Image} className={blockClasses} style={blockStyle} />;
             break;
         case 7:
-            block = <img src={block5Image} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={block5Image} className={blockClasses} style={blockStyle} />;
             break;
         case 8:
-            block = <img src={portalImage} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={portalImage} className={blockClasses} style={blockStyle} />;
             break;
         case 9:
-            block = <img src={block6Image} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={block6Image} className={blockClasses} style={blockStyle} />;
             break;
         case 10:
             block = <div className={blockClasses} style={{...blockStyle, border: '2px solid white', opacity: .5}}></div>;
             break;
         case 11:
-            block = <img src={coin} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={coin} className={blockClasses} style={blockStyle} />;
             break;
         case 12:
-            block = <img src={powerup} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={powerup} className={blockClasses} style={blockStyle} />;
             break;
         case 13:
-            block = <img src={shield} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={shield} className={blockClasses} style={blockStyle} />;
             break;
         case 14:
-            block = <img src={cannon} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={cannon} className={blockClasses} style={blockStyle} />;
             break;
         case 15:
-            block = <img src={laser} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={laser} className={blockClasses} style={blockStyle} />;
             break;
         case 16:
-            block = <img src={button} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={button} className={blockClasses} style={blockStyle} />;
             break;
         case 17:
-            block = <img src={bomb} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={bomb} className={blockClasses} style={blockStyle} />;
             break;
         case 18:
-            block = <img src={cannon2} className={blockClasses} style={blockStyle} />;
+            block = <img alt="" src={cannon2} className={blockClasses} style={blockStyle} />;
+            break;
+        case 19:
+            block = <img alt="" src={hacka} className={blockClasses} style={blockStyle} />;
         default:
             break;
     }
