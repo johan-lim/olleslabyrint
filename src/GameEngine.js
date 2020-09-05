@@ -11,7 +11,7 @@ import hackaImage from './assets/hacka.png';
 import facklaImage from './assets/fackla.png';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
-import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire } from './Audio';
+import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire, shieldUse } from './Audio';
 import levels from '../src/Levels';
 
 const initialState = {
@@ -21,7 +21,8 @@ const initialState = {
     gubbeLocked: false,
     inventory: [],
     doorOpen: false,
-    hackaHealth: 5,
+    hackaHealth: 1,
+    shieldHealth: 1,
     bombActive: false,
     message: '',
     bulletMoving: false
@@ -167,6 +168,10 @@ class GameEngine extends React.Component {
         if (this.state.gubbeX === zombie.zombieX && this.state.gubbeY === zombie.zombieY) {
             if (!this.state.inventory.includes('shield')) {
                 this.gubbeDied();
+            } else {
+                this.setState({ shieldHealth: this.state.shieldHealth - .2 });
+                this.playSoundEffect(shieldUse);
+                if (this.state.shieldHealth < 0) this.setState({ inventory: this.state.inventory.filter(item => item !== 'shield') })
             }
         }
     }
@@ -175,6 +180,10 @@ class GameEngine extends React.Component {
         if (this.state.gubbeX === this.state.bulletX && this.state.gubbeY === this.state.bulletY) {
             if (!this.state.inventory.includes('shield')) {
                 this.gubbeDied();
+            } else {
+                this.setState({ shieldHealth: this.state.shieldHealth - .2 });
+                this.playSoundEffect(shieldUse);
+                if (this.state.shieldHealth < 1) this.setState({ inventory: this.state.inventory.filter(item => item !== 'shield') })
             }
         }
     }
@@ -306,7 +315,7 @@ class GameEngine extends React.Component {
                 this.playSoundEffect(key);
             }
             if (this.checkGubbeCollision(direction) === 19) {
-                this.setState({ inventory: [...this.state.inventory, 'hacka'], points: this.state.points + 5, hackaHealth: 5 });
+                this.setState({ inventory: [...this.state.inventory, 'hacka'], points: this.state.points + 5, hackaHealth: 1 });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
@@ -318,9 +327,9 @@ class GameEngine extends React.Component {
                 this.setBoardXYAs(0);
                 this.playSoundEffect(fire);
             }
-            if (this.checkGubbeCollision(direction) === 9 && this.state.inventory.includes('hacka')) {
-                this.setState({ hackaHealth: this.state.hackaHealth - 1 }, () => {
-                    if (this.state.hackaHealth < 1) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
+            if ([1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.inventory.includes('hacka')) {
+                this.setState({ hackaHealth: this.state.hackaHealth - .2 }, () => {
+                    if (this.state.hackaHealth < 0) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
                 });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(explosion);
@@ -336,12 +345,13 @@ class GameEngine extends React.Component {
                 this.playSoundEffect(powerup);
             }
             if (this.checkGubbeCollision(direction) === 13) {
-                this.setState({ inventory: [...this.state.inventory, 'shield'], points: this.state.points + 10 });
+                if (this.state.inventory.includes('shield')) {
+                    this.setState({ points: this.state.points + 10, shieldHealth: 1 });
+                } else {
+                    this.setState({ inventory: [...this.state.inventory, 'shield'], points: this.state.points + 10, shieldHealth: 1 });
+                }
                 this.setBoardXYAs(0);
                 this.playSoundEffect(shield);
-                setTimeout(() => {
-                    this.setState({ inventory: this.state.inventory.filter(item => item !== 'shield')});
-                }, 10000);
             }
             if (this.checkGubbeCollision(direction) === 15) {
                 this.gubbeDied();
@@ -414,7 +424,7 @@ class GameEngine extends React.Component {
             const grid = new PF.Grid(matrix);
             const finder = new PF.AStarFinder();
             const path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
-            if (path.length) {
+            if (path.length > 1) {
                 if (zombie.zombieX > path[1][0]) zombie.zombieDirection = 0;
                 if (zombie.zombieX < path[1][0]) zombie.zombieDirection = 2;
                 if (zombie.zombieY > path[1][1]) zombie.zombieDirection = 1;
@@ -460,9 +470,9 @@ class GameEngine extends React.Component {
             />));
         const inventory = {
             'key': <img key="key" alt="" className="key" src={nyckelImage}/>,
-            'shield': <img key="shield" alt="" className="key" src={shieldImage}/>,
-            'hacka': <img key="shield" alt="" className="key" src={hackaImage}/>,
-            'fackla': <img key="shield" alt="" className="key" src={facklaImage}/>
+            'shield': <img style={{ opacity: this.state.shieldHealth }} key="shield" alt="" className="key" src={shieldImage}/>,
+            'hacka': <img style={{ opacity: this.state.hackaHealth }} key="hacka" alt="" className="key" src={hackaImage}/>,
+            'fackla': <img key="fackla" alt="" className="key" src={facklaImage}/>
         };
         const zombies = this.state.zombies.map((z, i) => 
             <Zombie
@@ -503,6 +513,7 @@ class GameEngine extends React.Component {
                         gubbeY={this.state.gubbeY}
                         gubbeDirection={this.state.gubbeDirection}
                         hasFackla={this.state.inventory.includes('fackla')}
+                        shieldHealth={this.state.shieldHealth}
                         hasShield={this.state.inventory.includes('shield')} />
                     {zombies}
                     {this.state.bulletMoving && <Skott gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={this.state.bulletX} skottY={this.state.bulletY} />}
