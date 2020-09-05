@@ -17,6 +17,7 @@ import levels from '../src/Levels';
 const initialState = {
     gubbeDirection: 1,
     zombies: [],
+    bullets: [],
     zombieSteps: 0,
     gubbeLocked: false,
     inventory: [],
@@ -24,8 +25,7 @@ const initialState = {
     hackaHealth: 1,
     shieldHealth: 1,
     bombActive: false,
-    message: '',
-    bulletMoving: false
+    message: ''
 };
 
 class GameEngine extends React.Component {
@@ -45,8 +45,8 @@ class GameEngine extends React.Component {
                     ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
-            bulletX: null,
-            bulletY: null
+            bullets: this.getIndexOfK(levels[0].blocks, 18).map(b =>
+                ({ initialX: b[1], initialY: b[0], moving: false }))
         };
     }
 
@@ -60,8 +60,8 @@ class GameEngine extends React.Component {
                     ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
-            bulletX: null,
-            bulletY: null
+            bullets: this.getIndexOfK(levels[this.state.level].blocks, 18).map(b =>
+                ({ initialX: b[1], initialY: b[0], moving: false }))
         } );
     }
 
@@ -79,8 +79,8 @@ class GameEngine extends React.Component {
                 .concat(this.getIndexOfK(levels[0].blocks, 23).map(z =>
                     ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
-            bulletX: null,
-            bulletY: null
+            bullets: this.getIndexOfK(levels[0].blocks, 18).map(b =>
+                ({ initialX: b[1], initialY: b[0], moving: false }))
         });
     }
 
@@ -176,8 +176,8 @@ class GameEngine extends React.Component {
         }
     }
 
-    checkGubbeVsBullet = () => {
-        if (this.state.gubbeX === this.state.bulletX && this.state.gubbeY === this.state.bulletY) {
+    checkGubbeVsBullet = (bullet) => {
+        if (this.state.gubbeX === bullet.bulletX && this.state.gubbeY === bullet.bulletY) {
             if (!this.state.inventory.includes('shield')) {
                 this.gubbeDied();
             } else {
@@ -252,11 +252,10 @@ class GameEngine extends React.Component {
     }
 
     getIndexOfK(arr, k) {
-        let indices = [];
-        for (var i = 0; i < arr.length; i++) {
-            var index = arr[i].indexOf(k);
-            if (index > -1) {
-              indices.push([i, index]);
+        const indices = [];
+        for (let row = 0; row < arr.length; row++) {
+            for (let char = 0; char < arr[row].length; char++) {
+                if (arr[row][char] === k) indices.push([row, char]);
             }
         }
         return indices;
@@ -438,9 +437,9 @@ class GameEngine extends React.Component {
         this.setState({ zombies: newZombies });
     }
 
-    checkZombiesVsBullet = () => {
+    checkZombiesVsBullet = (bullet) => {
         const newZombies = this.state.zombies.map(zombie => {
-            if (!(zombie.zombieX === this.state.bulletX && zombie.zombieY === this.state.bulletY)) {
+            if (!(zombie.zombieX === bullet.bulletX && zombie.zombieY === bullet.bulletY)) {
                 return zombie;
             } else {
                 return null;
@@ -452,20 +451,21 @@ class GameEngine extends React.Component {
 
     gunMove = () => {
         if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0) return;
-        if (this.state.bulletMoving === false) {
-            const bulletCoordinates = this.getIndexOfK(this.state.currentLevel, 18);
-            this.setState({ bulletMoving: true, bulletX: bulletCoordinates[0][1], bulletY: bulletCoordinates[0][0] });
-        }
-        if (this.state.bulletMoving) {
-            this.checkZombiesVsBullet();
-            this.checkGubbeVsBullet();
-            if (this.state.currentLevel[this.state.bulletY + 1][this.state.bulletX] === 0) {
-                this.setState({ bulletY: this.state.bulletY + 1 });
-            } else {
-                this.setState({ bulletMoving: false });
+        const newBullets = [...this.state.bullets];
+        newBullets.map(bullet => {
+            if (!bullet.moving) {
+                bullet.bulletX = bullet.initialX;
+                bullet.bulletY = bullet.initialY;
+                bullet.moving = true;
             }
-        }
-
+            this.checkZombiesVsBullet(bullet);
+            this.checkGubbeVsBullet(bullet);
+            if (this.state.currentLevel[bullet.bulletY + 1][bullet.bulletX] === 0) {
+                bullet.bulletY = bullet.bulletY + 1;
+            } else {
+                bullet.moving = false;
+            }    
+        });
     }
 
     render() {
@@ -487,6 +487,10 @@ class GameEngine extends React.Component {
             'hacka': <img style={{ opacity: this.state.hackaHealth }} key="hacka" alt="" className="key" src={hackaImage}/>,
             'fackla': <img key="fackla" alt="" className="key" src={facklaImage}/>
         };
+
+        const bullets = this.state.bullets.map((b, i) =>
+            <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
+        )
         const zombies = this.state.zombies.map((z, i) => 
             <Zombie
                 key={i}
@@ -529,7 +533,7 @@ class GameEngine extends React.Component {
                         shieldHealth={this.state.shieldHealth}
                         hasShield={this.state.inventory.includes('shield')} />
                     {zombies}
-                    {this.state.bulletMoving && <Skott gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={this.state.bulletX} skottY={this.state.bulletY} />}
+                    {bullets}
                 </div>
             <InfoMessage message={this.state.message} />
             </div>)
