@@ -43,7 +43,7 @@ header span .key {
     60% { transform: translateX(3%) rotate(2deg); }
     75% { transform: translateX(-1%) rotate(-1deg); }
     100% { transform: translateX(0%); } 
- } 
+}
 
 @keyframes pulsate {
     0% {
@@ -51,6 +51,18 @@ header span .key {
     }
     50% {
         background-color: rgb(146, 41, 191);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes fire {
+    0% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgba(206, 85, 33, .3);
     }
     100% {
         background-color: transparent;
@@ -94,7 +106,7 @@ header span .key {
 .block {
     width: 12%;
     height: 7%;
-    transition: .5s ease-in-out;
+    transition: .2s ease-in-out;
 }
 
 .shield {
@@ -136,6 +148,7 @@ header span .key {
     animation-timing-function: linear;
     transition: .5s ease-in-out;
 }
+
 
 .button {
     width: 8%;

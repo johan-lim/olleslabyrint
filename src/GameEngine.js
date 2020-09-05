@@ -1,4 +1,5 @@
 import React from 'react';
+import PF from 'pathfinding';
 import './GameEngine.css';
 import { handleTouchStart, handleTouchMove } from './Touch';
 import Gubbe from './Gubbe';
@@ -91,7 +92,7 @@ class GameEngine extends React.Component {
         music.loop = true;
         this.zombieTimer = setInterval(() => {
             this.zombieMove();
-        }, 500);
+        }, 1500);
         this.gunTimer = setInterval(() => {
             this.gunMove();
         }, 200);
@@ -409,37 +410,17 @@ class GameEngine extends React.Component {
         if (this.state.gubbeLocked) return;
         const zombies = [...this.state.zombies];
         const newZombies = zombies.map(zombie => {
-            if (this.checkZombieCollision(zombie, zombie.zombieDirection)) {
-                switch (zombie.zombieDirection) {
-                    case 0:
-                        zombie.zombieX = zombie.zombieX - 1;
-                        break;
-                    case 1:
-                        zombie.zombieY = zombie.zombieY - 1;
-                        break;
-                    case 2:
-                        zombie.zombieX = zombie.zombieX + 1;
-                        break;
-                    case 3:
-                        zombie.zombieY = zombie.zombieY + 1;
-                        break;
-                    default:
-                        break;
-                }
-                zombie.zombieSteps = zombie.zombieSteps + 1;
-                if (zombie.zombieSteps > 6) {
-                    const testDirection = Math.floor(Math.random() * 4);
-                    if (this.checkZombieCollision(zombie, testDirection)) {
-                        zombie.zombieDirection = testDirection
-                        zombie.zombieSteps = 0;
-                    }
-                }
-            } else {
-                const testDirection = Math.floor(Math.random() * 4);
-                if (this.checkZombieCollision(zombie, testDirection)) {
-                    zombie.zombieDirection = testDirection
-                    zombie.zombieSteps = 0;
-                }
+            const matrix = this.state.currentLevel.map(row => row.map(b => b === 0 ? 0 : 1));
+            const grid = new PF.Grid(matrix);
+            const finder = new PF.AStarFinder();
+            const path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
+            if (path.length) {
+                if (zombie.zombieX > path[1][0]) zombie.zombieDirection = 0;
+                if (zombie.zombieX < path[1][0]) zombie.zombieDirection = 2;
+                if (zombie.zombieY > path[1][1]) zombie.zombieDirection = 1;
+                if (zombie.zombieY < path[1][1]) zombie.zombieDirection = 3;
+                zombie.zombieX = path[1][0];
+                zombie.zombieY = path[1][1];    
             }
             this.checkGubbeVsZombie(zombie);
             return zombie;
