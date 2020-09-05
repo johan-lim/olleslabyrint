@@ -327,8 +327,8 @@ class GameEngine extends React.Component {
                 this.setBoardXYAs(0);
                 this.playSoundEffect(fire);
             }
-            if ([1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.inventory.includes('hacka')) {
-                this.setState({ hackaHealth: this.state.hackaHealth - .2 }, () => {
+            if ([5, 6, 7, 9].includes(this.checkGubbeCollision(direction)) && this.state.inventory.includes('hacka')) {
+                this.setState({ hackaHealth: this.state.hackaHealth - .25 }, () => {
                     if (this.state.hackaHealth < 0) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
                 });
                 this.setBoardXYAs(0);
@@ -438,6 +438,18 @@ class GameEngine extends React.Component {
         this.setState({ zombies: newZombies });
     }
 
+    checkZombiesVsBullet = () => {
+        const newZombies = this.state.zombies.map(zombie => {
+            if (!(zombie.zombieX === this.state.bulletX && zombie.zombieY === this.state.bulletY)) {
+                return zombie;
+            } else {
+                return null;
+            }
+        });
+        this.setState({ zombies: newZombies.filter(z => z !== null) });
+    }
+
+
     gunMove = () => {
         if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0) return;
         if (this.state.bulletMoving === false) {
@@ -445,6 +457,7 @@ class GameEngine extends React.Component {
             this.setState({ bulletMoving: true, bulletX: bulletCoordinates[0][1], bulletY: bulletCoordinates[0][0] });
         }
         if (this.state.bulletMoving) {
+            this.checkZombiesVsBullet();
             this.checkGubbeVsBullet();
             if (this.state.currentLevel[this.state.bulletY + 1][this.state.bulletX] === 0) {
                 this.setState({ bulletY: this.state.bulletY + 1 });
