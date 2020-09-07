@@ -131,6 +131,7 @@ class GameEngine extends React.Component {
     componentWillUnmount() {
         clearInterval(this.zombieTimer);
         clearInterval(this.gunTimer);
+        clearInterval(this.gunBulletsTimer)
         document.removeEventListener('keyup', this.keyBoard, false);
         document.removeEventListener('touchstart', handleTouchStart, false);
         document.removeEventListener('touchmove', (e) => {
@@ -168,24 +169,8 @@ class GameEngine extends React.Component {
         return false;
     }
 
-    checkZombieCollision = (zombie, direction) => {
-        switch (direction) {
-            case 0:
-                if ([0, 11, 12, 13, 16, 20, 21].includes(this.state.currentLevel[zombie.zombieY][zombie.zombieX - 1])) return true;
-                break;
-            case 1:
-                if ([0, 11, 12, 13, 16, 20, 21].includes(this.state.currentLevel[zombie.zombieY - 1][zombie.zombieX])) return true;
-                break;
-            case 2:
-                if ([0, 11, 12, 13, 16, 20, 21].includes(this.state.currentLevel[zombie.zombieY][zombie.zombieX + 1])) return true;
-                break;
-            case 3:
-                if ([0, 11, 12, 13, 16, 20, 21].includes(this.state.currentLevel[zombie.zombieY + 1][zombie.zombieX])) return true;
-                break;
-            default:
-                break;
-        }
-        return false;
+    checkZombieCollision = (zombie) => {
+        return this.state.currentLevel[zombie.zombieY][zombie.zombieX];
     }
 
     checkGubbeVsZombie = (zombie) => {
@@ -453,7 +438,7 @@ class GameEngine extends React.Component {
         if (this.state.gubbeLocked) return;
         const zombies = [...this.state.zombies];
         const newZombies = zombies.map(zombie => {
-            const matrix = this.state.currentLevel.map(row => row.map(b => b === 0 ? 0 : 1));
+            const matrix = this.state.currentLevel.map(row => row.map(b => [0, 15].includes(b) ? 0 : 1));
             const grid = new PF.Grid(matrix);
             const finder = new PF.AStarFinder();
             const path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
@@ -466,9 +451,13 @@ class GameEngine extends React.Component {
                 zombie.zombieY = path[1][1];    
             }
             this.checkGubbeVsZombie(zombie);
+            if(this.checkZombieCollision(zombie) === 15) {
+                this.playSoundEffect(skott);
+                return null;
+            }
             return zombie;
         })
-        this.setState({ zombies: newZombies });
+        this.setState({ zombies: newZombies.filter(z => z !== null) });
     }
 
     checkZombiesVsBullet = (bullet) => {
