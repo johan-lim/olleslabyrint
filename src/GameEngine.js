@@ -11,7 +11,7 @@ import hackaImage from './assets/hacka.png';
 import facklaImage from './assets/fackla.png';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
-import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire, shieldUse } from './Audio';
+import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire, shieldUse, skott } from './Audio';
 import levels from '../src/Levels';
 
 const initialState = {
@@ -442,6 +442,7 @@ class GameEngine extends React.Component {
             if (!(zombie.zombieX === bullet.bulletX && zombie.zombieY === bullet.bulletY)) {
                 return zombie;
             } else {
+                this.playSoundEffect(skott);
                 return null;
             }
         });
