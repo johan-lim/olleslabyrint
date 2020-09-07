@@ -1,4 +1,3 @@
-import React from 'react';
 import musicAudio from './assets/sounds/themetune.mp3';
 import endMusicAudio from './assets/sounds/game_done.mp3';
 import gubbeDieAudio from './assets/sounds/gubbedie.ogg';
@@ -16,6 +15,7 @@ import playAudio from './assets/sounds/play.ogg';
 import fireAudio from './assets/sounds/fire.ogg';
 import shieldUseAudio from './assets/sounds/shield_use.ogg';
 import skottAudio from './assets/sounds/skott.ogg';
+import getGunAudio from './assets/sounds/get_gun.ogg';
 
 export const gubbeDie = new Audio(gubbeDieAudio);
 export const peng = new Audio(pengAudio);
@@ -34,6 +34,8 @@ export const play = new Audio(playAudio);
 export const fire = new Audio(fireAudio);
 export const shieldUse = new Audio(shieldUseAudio);
 export const skott = new Audio(skottAudio);
+export const getGun = new Audio(getGunAudio);
+
 
 music.addEventListener('timeupdate', function(){
     var buffer = .20

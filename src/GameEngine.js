@@ -9,15 +9,34 @@ import nyckelImage from './assets/nyckel.png';
 import shieldImage from './assets/sköld.png';
 import hackaImage from './assets/hacka.png';
 import facklaImage from './assets/fackla.png';
+import gunImage from './assets/gun.png';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
-import { gubbeDie, peng, key, shield, powerup, portal, win, laser, noKey, music, bomb, explosion, fire, shieldUse, skott } from './Audio';
+import {
+    gubbeDie,
+    peng,
+    key,
+    shield,
+    powerup,
+    portal,
+    win,
+    laser,
+    noKey,
+    music,
+    bomb,
+    explosion,
+    fire,
+    shieldUse,
+    skott,
+    getGun } from './Audio';
+
 import levels from '../src/Levels';
 
 const initialState = {
     gubbeDirection: 1,
     zombies: [],
     bullets: [],
+    gunBullets: [],
     zombieSteps: 0,
     gubbeLocked: false,
     inventory: [],
@@ -95,8 +114,11 @@ class GameEngine extends React.Component {
             this.zombieMove();
         }, 1500);
         this.gunTimer = setInterval(() => {
-            this.gunMove();
+            this.bulletsMove();
         }, 200);
+        this.gunBulletsTimer = setInterval(() => {
+            this.gunBulletsMove();
+        }, 100);
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
           window.document.addEventListener('touchmove', e => {
             if(e.scale !== 1) {
@@ -123,6 +145,8 @@ class GameEngine extends React.Component {
             this.setState({ level: this.state.level + 1 }, () => {
                 this.reset();
             });
+        } else if (e.keyCode === 32){
+            this.fireGun();
         } else {
             this.moveGubbe(e.keyCode - 37);
         }
@@ -186,6 +210,11 @@ class GameEngine extends React.Component {
                 if (this.state.shieldHealth < 1) this.setState({ inventory: this.state.inventory.filter(item => item !== 'shield') })
             }
         }
+    }
+
+    fireGun = () => {
+        if (!this.state.inventory.includes('gun')) return false;
+        this.setState({ gunBullets: [...this.state.gunBullets, { bulletX: null, bulletY: null, moving: false }]})
     }
 
     removeLaser = () => {
@@ -312,6 +341,11 @@ class GameEngine extends React.Component {
                 this.setState({ inventory: [...this.state.inventory, 'key'], points: this.state.points + 5 });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
+            }
+            if (this.checkGubbeCollision(direction) === 24) {
+                this.setState({ inventory: [...this.state.inventory, 'gun'], points: this.state.points + 5 });
+                this.setBoardXYAs(0);
+                this.playSoundEffect(getGun);
             }
             if (this.checkGubbeCollision(direction) === 19) {
                 this.setState({ inventory: [...this.state.inventory, 'hacka'], points: this.state.points + 5, hackaHealth: 1 });
@@ -450,7 +484,7 @@ class GameEngine extends React.Component {
     }
 
 
-    gunMove = () => {
+    bulletsMove = () => {
         if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0) return;
         const newBullets = [...this.state.bullets];
         newBullets.map(bullet => {
@@ -466,6 +500,53 @@ class GameEngine extends React.Component {
             } else {
                 bullet.moving = false;
             }    
+        });
+    }
+
+    gunBulletsMove = () => {
+        if (this.state.gubbeLocked || !this.state.inventory.includes('gun')) return;
+        const newBullets = [...this.state.gunBullets];
+        newBullets.map(bullet => {
+            if (!bullet.moving) {
+                this.playSoundEffect(skott);
+                bullet.bulletX = this.state.gubbeX;
+                bullet.bulletY = this.state.gubbeY;
+                bullet.moving = true;
+            }
+            this.checkZombiesVsBullet(bullet);
+            switch (this.state.gubbeDirection) {
+                case 0:
+                    if (this.state.currentLevel[bullet.bulletY][bullet.bulletX - 1] === 0) {
+                        bullet.bulletX = bullet.bulletX - 1;
+                    } else {
+                        bullet.moving = false;
+                    }    
+                    break;
+                case 1:
+                    if (this.state.currentLevel[bullet.bulletY - 1][bullet.bulletX] === 0) {
+                        bullet.bulletY = bullet.bulletY - 1;
+                    } else {
+                        bullet.moving = false;
+                    }
+                    break;
+                case 2:
+                    if (this.state.currentLevel[bullet.bulletY][bullet.bulletX + 1] === 0) {
+                        bullet.bulletX = bullet.bulletX + 1;
+                    } else {
+                        bullet.moving = false;
+                    }
+                    break;
+                case 3:
+                    if (this.state.currentLevel[bullet.bulletY + 1][bullet.bulletX] === 0) {
+                        bullet.bulletY = bullet.bulletY + 1;
+                    } else {
+                        bullet.moving = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            this.setState({ gunBullets: newBullets.filter(bullet => bullet.moving !== false) });  
         });
     }
 
@@ -486,12 +567,17 @@ class GameEngine extends React.Component {
             'key': <img key="key" alt="" className="key" src={nyckelImage}/>,
             'shield': <img style={{ opacity: this.state.shieldHealth }} key="shield" alt="" className="key" src={shieldImage}/>,
             'hacka': <img style={{ opacity: this.state.hackaHealth }} key="hacka" alt="" className="key" src={hackaImage}/>,
-            'fackla': <img key="fackla" alt="" className="key" src={facklaImage}/>
+            'fackla': <img key="fackla" alt="" className="key" src={facklaImage}/>,
+            'gun': <img key="gun" alt="" className="key" src={gunImage}/>
+
         };
 
         const bullets = this.state.bullets.map((b, i) =>
             <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
         )
+        const gunBullets = this.state.gunBullets.map((b, i) =>
+        <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
+    )
         const zombies = this.state.zombies.map((z, i) => 
             <Zombie
                 key={i}
@@ -535,6 +621,7 @@ class GameEngine extends React.Component {
                         hasShield={this.state.inventory.includes('shield')} />
                     {zombies}
                     {bullets}
+                    {gunBullets}
                 </div>
             <InfoMessage message={this.state.message} />
             </div>)

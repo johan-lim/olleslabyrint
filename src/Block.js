@@ -19,6 +19,7 @@ import button from './assets/knapp.png';
 import bomb from './assets/bomb.png';
 import hacka from './assets/hacka.png';
 import fackla from './assets/fackla.png';
+import gun from './assets/gun.png';
 import './block.css';
 
 function Block(props) {
@@ -37,7 +38,7 @@ function Block(props) {
         fackla: props.block === 22,
         bomb: props.block === 17,
         active: props.bombActive,
-        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19, 22].includes(props.block),
+        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19, 22, 24].includes(props.block),
         open: props.doorOpen
     });
 
@@ -121,6 +122,9 @@ function Block(props) {
             break;
         case 22:
             block = <img alt="" src={fackla} className={blockClasses} style={blockStyle} />;
+            break;
+        case 24:
+            block = <img alt="" src={gun} className={blockClasses} style={blockStyle} />;
             break;
         default:
             break;
