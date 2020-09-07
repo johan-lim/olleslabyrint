@@ -15,6 +15,7 @@ import explosionAudio from './assets/sounds/explosion.ogg';
 import playAudio from './assets/sounds/play.ogg';
 import fireAudio from './assets/sounds/fire.ogg';
 import shieldUseAudio from './assets/sounds/shield_use.ogg';
+import skottAudio from './assets/sounds/skott.ogg';
 
 export const gubbeDie = new Audio(gubbeDieAudio);
 export const peng = new Audio(pengAudio);
@@ -32,6 +33,7 @@ export const explosion = new Audio(explosionAudio);
 export const play = new Audio(playAudio);
 export const fire = new Audio(fireAudio);
 export const shieldUse = new Audio(shieldUseAudio);
+export const skott = new Audio(skottAudio);
 
 music.addEventListener('timeupdate', function(){
     var buffer = .20
