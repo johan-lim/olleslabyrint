@@ -38,7 +38,7 @@ function Skott(props) {
     });
 
     return (
-        <img src={skottImage} className={skottClasses} style={{ opacity: (viewDistanceX < 5 && viewDistanceY < 5) ? distanceToOpacity[viewDistanceX] : 0, position: 'absolute', top: `${parseInt(props.skottY * 7)}%`, left: `${parseInt(props.skottX * 12)}%` }} />
+        <img alt="" src={skottImage} className={skottClasses} style={{ opacity: (viewDistanceX < 5 && viewDistanceY < 5) ? distanceToOpacity[viewDistanceX] : 0, position: 'absolute', top: `${parseInt(props.skottY * 7)}%`, left: `${parseInt(props.skottX * 12)}%` }} />
     );
 }
 

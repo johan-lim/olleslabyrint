@@ -26,6 +26,7 @@ header span .key {
     height: 2%;
 }
 
+
 @keyframes spin {
     from {
         transform:rotate(0deg);

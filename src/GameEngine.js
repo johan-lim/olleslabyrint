@@ -456,7 +456,7 @@ class GameEngine extends React.Component {
         newBullets.map(bullet => {
             if (!bullet.moving) {
                 bullet.bulletX = bullet.initialX;
-                bullet.bulletY = bullet.initialY;
+                bullet.bulletY = bullet.initialY + 1;
                 bullet.moving = true;
             }
             this.checkZombiesVsBullet(bullet);
