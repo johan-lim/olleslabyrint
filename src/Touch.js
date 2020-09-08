@@ -7,10 +7,10 @@ function getTouches(evt) {
 
 export function handleTouchStart(evt) {
     evt.preventDefault();
-    const firstTouch = getTouches(evt)[0];                                      
-    xDown = firstTouch.clientX;                                      
-    yDown = firstTouch.clientY;                                      
-};                                                
+    const firstTouch = getTouches(evt)[0];
+    xDown = firstTouch.clientX;
+    yDown = firstTouch.clientY;
+};
 
 export function handleTouchMove(evt, cb) {
     evt.preventDefault();
@@ -18,7 +18,7 @@ export function handleTouchMove(evt, cb) {
         return;
     }
 
-    var xUp = evt.touches[0].clientX;                          
+    var xUp = evt.touches[0].clientX;
     var yUp = evt.touches[0].clientY;
 
     var xDiff = xDown - xUp;

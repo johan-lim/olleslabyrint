@@ -1,7 +1,7 @@
 import React from 'react';
 import PF from 'pathfinding';
 import './GameEngine.css';
-import { handleTouchStart, handleTouchMove } from './Touch';
+import { handleTouchMove } from './Touch';
 import Gubbe from './Gubbe';
 import Zombie from './Zombie';
 import Block from './Block';
@@ -105,7 +105,9 @@ class GameEngine extends React.Component {
 
     componentDidMount() {
         document.addEventListener('keyup', this.keyBoard, false);
-        document.addEventListener('touchstart', handleTouchStart, false);        
+        document.addEventListener('touchstart', (e) => {
+            this.fireGun();
+        }, false);
         document.addEventListener('touchmove', (e) => {
             handleTouchMove(e, this.moveGubbe);
         }, false);
@@ -133,7 +135,7 @@ class GameEngine extends React.Component {
         clearInterval(this.gunTimer);
         clearInterval(this.gunBulletsTimer)
         document.removeEventListener('keyup', this.keyBoard, false);
-        document.removeEventListener('touchstart', handleTouchStart, false);
+        // document.removeEventListener('touchstart', handleTouchStart, false);
         document.removeEventListener('touchmove', (e) => {
             handleTouchMove(e, this.moveGubbe);
         }, false);
