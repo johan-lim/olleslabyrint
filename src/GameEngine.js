@@ -1,7 +1,6 @@
 import React from 'react';
 import PF from 'pathfinding';
 import './GameEngine.css';
-import { handleTouchStart, handleTouchMove } from './Touch';
 import Gubbe from './Gubbe';
 import Zombie from './Zombie';
 import Block from './Block';
@@ -314,6 +313,7 @@ class GameEngine extends React.Component {
     }
 
     moveGubbe = (direction) => {
+        console.log(this.state.gubbeX, this.state.gubbeY);
         if (this.state.gubbeLocked) return;
         this.setState({ gubbeDirection: direction }, () => {
             if (this.checkGubbeCollision(direction) === 2) {
