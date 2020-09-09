@@ -1,7 +1,7 @@
 import React from 'react';
 import PF from 'pathfinding';
 import './GameEngine.css';
-import { handleTouchMove } from './Touch';
+import { handleTouchStart, handleTouchMove } from './Touch';
 import Gubbe from './Gubbe';
 import Zombie from './Zombie';
 import Block from './Block';
@@ -10,6 +10,8 @@ import shieldImage from './assets/sköld.png';
 import hackaImage from './assets/hacka.png';
 import facklaImage from './assets/fackla.png';
 import gunImage from './assets/gun.png';
+import GunButton from './GunButton';
+import Buttons from './Button';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
 import {
@@ -105,12 +107,6 @@ class GameEngine extends React.Component {
 
     componentDidMount() {
         document.addEventListener('keyup', this.keyBoard, false);
-        document.addEventListener('touchstart', (e) => {
-            this.fireGun();
-        }, false);
-        document.addEventListener('touchmove', (e) => {
-            handleTouchMove(e, this.moveGubbe);
-        }, false);
         music.loop = true;
         this.zombieTimer = setInterval(() => {
             this.zombieMove();
@@ -135,10 +131,6 @@ class GameEngine extends React.Component {
         clearInterval(this.gunTimer);
         clearInterval(this.gunBulletsTimer)
         document.removeEventListener('keyup', this.keyBoard, false);
-        // document.removeEventListener('touchstart', handleTouchStart, false);
-        document.removeEventListener('touchmove', (e) => {
-            handleTouchMove(e, this.moveGubbe);
-        }, false);
     }
 
     keyBoard = (e) => {
@@ -431,7 +423,7 @@ class GameEngine extends React.Component {
             default:
                 break;
         }
-        this.state.zombies.map(zombie => {
+        this.state.zombies.forEach(zombie => {
             this.checkGubbeVsZombie(zombie);
         });
     }
@@ -477,8 +469,8 @@ class GameEngine extends React.Component {
 
     bulletsMove = () => {
         if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0) return;
-        const newBullets = [...this.state.bullets];
-        newBullets.map(bullet => {
+        const oldBullets = [...this.state.bullets];
+        const newBullets = oldBullets.map(bullet => {
             if (!bullet.moving) {
                 bullet.bulletX = bullet.initialX;
                 bullet.bulletY = bullet.initialY + 1;
@@ -490,14 +482,16 @@ class GameEngine extends React.Component {
                 bullet.bulletY = bullet.bulletY + 1;
             } else {
                 bullet.moving = false;
-            }    
+            }
+            return bullet;
         });
+        this.setState({ bullets: newBullets });
     }
 
     gunBulletsMove = () => {
         if (this.state.gubbeLocked || !this.state.inventory.includes('gun')) return;
-        const newBullets = [...this.state.gunBullets];
-        newBullets.map(bullet => {
+        const oldBullets = [...this.state.gunBullets];
+        const newBullets = oldBullets.map(bullet => {
             if (!bullet.moving) {
                 this.playSoundEffect(skott);
                 bullet.bulletX = this.state.gubbeX;
@@ -537,8 +531,9 @@ class GameEngine extends React.Component {
                 default:
                     break;
             }
-            this.setState({ gunBullets: newBullets.filter(bullet => bullet.moving !== false) });  
+            return bullet;
         });
+        this.setState({ gunBullets: newBullets.filter(bullet => bullet.moving !== false) });
     }
 
     render() {
@@ -614,7 +609,9 @@ class GameEngine extends React.Component {
                     {bullets}
                     {gunBullets}
                 </div>
-            <InfoMessage message={this.state.message} />
+                <InfoMessage message={this.state.message} />
+                <Buttons move={this.moveGubbe}/>
+                {this.state.inventory.includes('gun') && <GunButton fireGun={this.fireGun} />}
             </div>)
     }
 }

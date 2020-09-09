@@ -24,6 +24,9 @@ export function handleTouchMove(evt, cb) {
     var xDiff = xDown - xUp;
     var yDiff = yDown - yUp;
 
+    console.log(xDiff, yDiff)
+
+
     if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {
         if ( xDiff > 0 ) {
             cb(0);
