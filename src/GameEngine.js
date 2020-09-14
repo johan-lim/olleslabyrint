@@ -104,6 +104,10 @@ class GameEngine extends React.Component {
         });
     }
 
+    buttonPress = (direction) => {
+        if (direction !== undefined) this.moveGubbe(direction);
+    }
+
     componentDidMount() {
         document.addEventListener('keyup', this.keyBoard, false);
         music.loop = true;
@@ -313,7 +317,6 @@ class GameEngine extends React.Component {
     }
 
     moveGubbe = (direction) => {
-        console.log(this.state.gubbeX, this.state.gubbeY);
         if (this.state.gubbeLocked) return;
         this.setState({ gubbeDirection: direction }, () => {
             if (this.checkGubbeCollision(direction) === 2) {
@@ -398,33 +401,33 @@ class GameEngine extends React.Component {
                     }
                 })
             }
-        });
-        switch (direction) {
-            case 0:
-                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
-                    this.setState({ gubbeX: this.state.gubbeX - 1 });
-                }
-                break;
-            case 1:
-                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
-                    this.setState({ gubbeY: this.state.gubbeY - 1 });                    
-                }
-                break;
-            case 2:
-                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < 23) {
-                    this.setState({ gubbeX: this.state.gubbeX + 1 });
-                }
-                break;
-            case 3:
-                if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < 10) {
-                    this.setState({ gubbeY: this.state.gubbeY + 1 });
-                }
-                break;
-            default:
-                break;
-        }
-        this.state.zombies.forEach(zombie => {
-            this.checkGubbeVsZombie(zombie);
+            switch (direction) {
+                case 0:
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
+                        this.setState({ gubbeX: this.state.gubbeX - 1 });
+                    }
+                    break;
+                case 1:
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
+                        this.setState({ gubbeY: this.state.gubbeY - 1 });                    
+                    }
+                    break;
+                case 2:
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < 23) {
+                        this.setState({ gubbeX: this.state.gubbeX + 1 });
+                    }
+                    break;
+                case 3:
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < 10) {
+                        this.setState({ gubbeY: this.state.gubbeY + 1 });
+                    }
+                    break;
+                default:
+                    break;
+            }
+            this.state.zombies.forEach(zombie => {
+                this.checkGubbeVsZombie(zombie);
+            });
         });
     }
 
@@ -582,7 +585,7 @@ class GameEngine extends React.Component {
                         <h3>av Olle Kanarp</h3>
                     </div>
                     <div className="info">
-                        <span>Styr med piltangenterna ⬆️ ⬇️ ➡️ ⬅️</span>
+                        <span className="controls_info">Styr med piltangenterna <span>⬆️ ⬇️ ➡️ ⬅️</span></span>
                         <span>Hitta nyckeln 🗝 och öppna dörren</span>
                         <span onClick={this.toggleMusic}>Musik {this.state.music ? 'på' : 'av'}</span>
                         <span onClick={this.toggleSoundEffects}>Ljudeffekter {this.state.soundEffects ? 'på' : 'av'}</span>
@@ -610,7 +613,7 @@ class GameEngine extends React.Component {
                     {gunBullets}
                 </div>
                 <InfoMessage message={this.state.message} />
-                <Buttons move={this.moveGubbe}/>
+                <Buttons move={this.buttonPress}/>
                 {this.state.inventory.includes('gun') && <GunButton fireGun={this.fireGun} />}
             </div>)
     }

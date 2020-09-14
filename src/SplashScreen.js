@@ -5,8 +5,8 @@ import playbutton from './assets/spela.png';
 export default function SplashScreen(props) {
     return (
         <div className="title_screen_wrapper">
-            <img className="title_screen pixelated" src={splash} />
-            <img className="playbutton pixelated" onClick={props.playGame} src={playbutton} />
+            <img alt="" className="title_screen pixelated" src={splash} />
+            <img alt="" className="playbutton pixelated" onClick={props.playGame} src={playbutton} />
         </div>
     )
 }

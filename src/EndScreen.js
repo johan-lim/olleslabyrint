@@ -8,7 +8,7 @@ export default function EndScreen(props) {
     }); 
     return (
         <div className="title_screen_wrapper">
-            <img className="title_screen pixelated" src={endScreen} />
+            <img alt="" className="title_screen pixelated" src={endScreen} />
         </div>
     )
 }

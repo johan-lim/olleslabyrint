@@ -3,24 +3,6 @@ import classnames from 'classnames';
 import skottImage from './assets/skott.png';
 
 function Skott(props) {
-    let degreesOfRotation = 0;
-    switch (props.gubbeDirection) {
-        case 1:
-            degreesOfRotation = 0;
-            break;
-        case 2:
-            degreesOfRotation = 90;
-            break;
-        case 3:
-            degreesOfRotation = 180;
-            break;
-        case 0:
-            degreesOfRotation = 270;
-            break;
-        default:
-            break;
-    }
-    
     const distanceToOpacity = {
         1: .9,
         2: .6,
@@ -30,7 +12,6 @@ function Skott(props) {
 
     const viewDistanceX = Math.abs(props.gubbeX - props.skottX);
     const viewDistanceY = Math.abs(props.gubbeY - props.skottY);
-
 
     const skottClasses = classnames({
         pixelated: true,

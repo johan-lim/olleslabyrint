@@ -59,3 +59,9 @@ h3 {
   height: 90vh;
   font-size: calc(7px + 2vmin);
 }
+
+@media only screen and (max-width: 900px) {
+  .controls_info {
+    display: none;
+  }
+}

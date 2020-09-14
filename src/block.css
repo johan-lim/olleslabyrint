@@ -32,17 +32,20 @@ header span .key {
     width: 15%;
     top: 60%;
     left: 10%;
-    opacity: .5;
+    opacity: .3;
+}
+.gun-button:hover {
+    opacity: .7;
 }
 
 .move-button {
     position: absolute;
     width: 8%;
     min-width: 70px;
-    opacity: .5;
+    opacity: .3;
 }
 .move-button:hover {
-    opacity: 1;
+    opacity: .7;
 }
 
 .move-button.up{
@@ -205,7 +208,7 @@ header span .key {
     margin-top: 0%;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 900px) {
     .move-button, .gun-button {
         display: none;
     }
