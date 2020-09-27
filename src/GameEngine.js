@@ -60,9 +60,9 @@ class GameEngine extends React.Component {
             soundEffects: true,
             currentLevel: levels[0].blocks,
             zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
-                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
                 .concat(this.getIndexOfK(levels[0].blocks, 23).map(z =>
-                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
+                    ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
             bullets: this.getIndexOfK(levels[0].blocks, 18).map(b =>
@@ -75,9 +75,9 @@ class GameEngine extends React.Component {
             ...initialState,
             currentLevel: levels[this.state.level].blocks,
             zombies: this.getIndexOfK(levels[this.state.level].blocks, 21).map(z =>
-                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
                 .concat(this.getIndexOfK(levels[this.state.level].blocks, 23).map(z =>
-                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
+                    ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
             gubbeX: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
             bullets: this.getIndexOfK(levels[this.state.level].blocks, 18).map(b =>
@@ -95,9 +95,10 @@ class GameEngine extends React.Component {
             soundEffects: true,
             currentLevel: levels[0].blocks,
             zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
-                ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0 }))
+                ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
                 .concat(this.getIndexOfK(levels[0].blocks, 23).map(z =>
-                    ({ zombieX: z[1], zombieY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
+                    ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0, isMonster: true }))),
+            gubbeX: this.getIndexOfK(levels[0].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[0].blocks, 20)[0][0],
             bullets: this.getIndexOfK(levels[0].blocks, 18).map(b =>
                 ({ initialX: b[1], initialY: b[0], moving: false }))
@@ -145,6 +146,8 @@ class GameEngine extends React.Component {
             });
         } else if (e.keyCode === 32){
             this.fireGun();
+        } else if (e.keyCode === 71){
+            this.moveEntirePlayingField();
         } else {
             this.moveGubbe(e.keyCode - 37);
         }
@@ -431,10 +434,20 @@ class GameEngine extends React.Component {
         });
     }
 
+    zombieDied = (zombie) => {
+        this.playSoundEffect(skott);
+        zombie.zombieX = zombie.initialX;
+        zombie.zombieY = zombie.initialY;
+    }
+
     zombieMove = () => {
         if (this.state.gubbeLocked) return;
         const zombies = [...this.state.zombies];
         const newZombies = zombies.map(zombie => {
+            if (!zombie.zombieX || !zombie.zombieY) {
+                zombie.zombieX = zombie.initialX;
+                zombie.zombieY = zombie.initialY;
+            }
             const matrix = this.state.currentLevel.map(row => row.map(b => [0, 15].includes(b) ? 0 : 1));
             const grid = new PF.Grid(matrix);
             const finder = new PF.AStarFinder();
@@ -449,8 +462,7 @@ class GameEngine extends React.Component {
             }
             this.checkGubbeVsZombie(zombie);
             if(this.checkZombieCollision(zombie) === 15) {
-                this.playSoundEffect(skott);
-                return null;
+                this.zombieDied(zombie);
             }
             return zombie;
         })
@@ -462,8 +474,8 @@ class GameEngine extends React.Component {
             if (!(zombie.zombieX === bullet.bulletX && zombie.zombieY === bullet.bulletY)) {
                 return zombie;
             } else {
-                this.playSoundEffect(skott);
-                return null;
+                this.zombieDied(zombie);
+                return zombie;
             }
         });
         this.setState({ zombies: newZombies.filter(z => z !== null) });
