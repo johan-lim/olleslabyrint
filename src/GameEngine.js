@@ -553,7 +553,17 @@ class GameEngine extends React.Component {
     }
 
     render() {
-        const level = this.state.currentLevel.map((line, y) => line.map((block, x) => 
+        let viewPort = [new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7), new Array(7)];
+        for (let y = 0; y < 7; y++) {
+            for (let x = 0; x < 7; x++) {
+                let currentBlock = 0;
+                if ((y - 3 + this.state.gubbeY) > -1 && (x - 3 + this.state.gubbeX) > -1 && (y - 3 + this.state.gubbeY) < 12 && (x - 3 + this.state.gubbeX) < 25) {
+                    currentBlock = this.state.currentLevel[y - 3 + this.state.gubbeY][x - 3 + this.state.gubbeX];
+                }
+                viewPort[y][x] = currentBlock; 
+            }
+        }
+        const level = viewPort.map((line, y) => line.map((block, x) =>
             <Block 
                 doorOpen={this.state.doorOpen}
                 bombActive={this.state.bombActive}
@@ -575,7 +585,13 @@ class GameEngine extends React.Component {
         };
 
         const bullets = this.state.bullets.map((b, i) =>
-            <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
+            <Skott
+                key={i}
+                hasFackla={this.state.inventory.includes('fackla')}
+                gubbeX={this.state.gubbeX}
+                gubbeY={this.state.gubbeY}
+                skottX={b.bulletX}
+                skottY={b.bulletY} />
         )
         const gunBullets = this.state.gunBullets.map((b, i) =>
         <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
@@ -615,8 +631,8 @@ class GameEngine extends React.Component {
                 <div className="level">
                     {level}
                     <Gubbe
-                        gubbeX={this.state.gubbeX}
-                        gubbeY={this.state.gubbeY}
+                        gubbeX={3}
+                        gubbeY={3}
                         gubbeDirection={this.state.gubbeDirection}
                         hasFackla={this.state.inventory.includes('fackla')}
                         shieldHealth={this.state.shieldHealth}

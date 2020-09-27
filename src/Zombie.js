@@ -26,15 +26,11 @@ function Zombie(props) {
         1: 1,
         2: .9,
         3: .7,
-        4: .6,
-        5: .3,
-        6: .1,
-        7: .07,
-        8: .03,
-        9: .01,
-        10: .01,
-        11: .01,
-        12: .005
+        4: .5,
+        5: .4,
+        6: .2,
+        7: .1,
+        8: .05
     };
 
     const hasFackla = props.hasFackla;
@@ -42,8 +38,9 @@ function Zombie(props) {
     const viewDistanceX = Math.abs(props.gubbeX - props.zombieX);
     const viewDistanceY = Math.abs(props.gubbeY - props.zombieY);
 
+
     return (
-        <img alt="" src={props.isMonster ? lavaMonsterImage : zombieImage} className="pixelated gubbe zombie" style={props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 7 : 4) && viewDistanceY < (hasFackla ? 7 : 4)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt(props.zombieY * 7)}%`, left: `${parseInt(props.zombieX * 12)}%`, width: '13%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
+        <img alt="" src={props.isMonster ? lavaMonsterImage : zombieImage} className="pixelated gubbe zombie" style={ props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt((props.zombieY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.zombieX - props.gubbeX + 3) * 30)}%`, width: '26%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
     );
 }
 

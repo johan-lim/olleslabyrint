@@ -42,26 +42,22 @@ function Block(props) {
         open: props.doorOpen
     });
 
-    const viewDistanceX = Math.abs(props.gubbeX - props.x);
-    const viewDistanceY = Math.abs(props.gubbeY - props.y);
+    const viewDistanceX = Math.abs(3 - props.x);
+    const viewDistanceY = Math.abs(3 - props.y);
 
     const distanceToOpacity = {
         1: 1,
         2: .9,
         3: .7,
-        4: .6,
-        5: .3,
-        6: .1,
-        7: .07,
-        8: .03,
-        9: .01,
-        10: .01,
-        11: .01,
-        12: .005
+        4: .5,
+        5: .4,
+        6: .2,
+        7: .1,
+        8: .05
     };
 
     const hasFackla = props.hasFackla;
-    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < (hasFackla ? 7 : 4) && viewDistanceY < (hasFackla ? 7 : 4) ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 7)}%`, left: `${parseInt(props.x * 12)}%`} : { width: '50px', height: '50px'};
+    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3) ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 14)}%`, left: `${parseInt(props.x * 30)}%`} : { width: '50px', height: '50px'};
     switch(props.block) {
         case 1:
             block = <img alt="" src={blockImage} className={blockClasses} style={blockStyle} />;

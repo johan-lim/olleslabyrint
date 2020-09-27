@@ -1,11 +1,10 @@
 .gubbe {
     position: absolute;
+    margin-top: 5%;
+    margin-left: 2%;
 }
 
 .hasShield {
-    border: 3px dashed brown;
+    border: 6px dashed brown;
 }
 
-.zombie {
-    transition: .5s ease-in-out;
-}
