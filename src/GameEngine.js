@@ -112,6 +112,7 @@ class GameEngine extends React.Component {
     componentDidMount() {
         document.addEventListener('keyup', this.keyBoard, false);
         music.loop = true;
+        this.zombieMove();
         this.zombieTimer = setInterval(() => {
             this.zombieMove();
         }, 1500);
