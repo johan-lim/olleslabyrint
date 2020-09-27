@@ -30,7 +30,7 @@ function Gubbe(props) {
     });
 
     return (
-        <img alt="" src={props.hasFackla ? gubbeFacklaImage : gubbeImage} className={gubbeClasses} style={props.gubbeX ? { top: `${parseInt(props.gubbeY * 14)}%`, left: `${parseInt(props.gubbeX * 30)}%`, width: '26%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'}} />
+        <img alt="" src={props.hasFackla ? gubbeFacklaImage : gubbeImage} className={gubbeClasses} style={props.gubbeX ? { top: `${parseInt(props.gubbeY * 14)}%`, left: `${parseInt(props.gubbeX * 30)}%`, width: '24%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'}} />
     );
 }
 

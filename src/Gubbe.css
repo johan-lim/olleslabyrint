@@ -1,10 +1,11 @@
 .gubbe {
     position: absolute;
-    margin-top: 5%;
+    margin-top: 3.5%;
     margin-left: 2%;
+    box-sizing: border-box;
 }
 
 .hasShield {
-    border: 6px dashed brown;
+    border: 5px dashed brown;
 }
 
