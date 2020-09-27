@@ -25,7 +25,7 @@ function Skott(props) {
     });
 
     return (
-        <img alt="" src={skottImage} className={skottClasses} style={{ opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX] : 0, position: 'absolute', top: `${parseInt((props.skottY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.skottX - props.gubbeX + 3) * 30)}%` }} />
+        <img alt="" src={skottImage} className={skottClasses} style={{ opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX] : 0, position: 'absolute', top: `${parseInt((props.skottY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.skottX - props.gubbeX + 3) * 7)}%` }} />
     );
 }
 

@@ -417,12 +417,12 @@ class GameEngine extends React.Component {
                     }
                     break;
                 case 2:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < 23) {
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < this.state.currentLevel[0].length - 2) {
                         this.setState({ gubbeX: this.state.gubbeX + 1 });
                     }
                     break;
                 case 3:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < 10) {
+                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < this.state.currentLevel.length - 2) {
                         this.setState({ gubbeY: this.state.gubbeY + 1 });
                     }
                     break;
@@ -557,7 +557,7 @@ class GameEngine extends React.Component {
         for (let y = 0; y < 7; y++) {
             for (let x = 0; x < 7; x++) {
                 let currentBlock = 0;
-                if ((y - 3 + this.state.gubbeY) > -1 && (x - 3 + this.state.gubbeX) > -1 && (y - 3 + this.state.gubbeY) < 12 && (x - 3 + this.state.gubbeX) < 25) {
+                if ((y - 3 + this.state.gubbeY) > -1 && (x - 3 + this.state.gubbeX) > -1 && (y - 3 + this.state.gubbeY) < this.state.currentLevel.length && (x - 3 + this.state.gubbeX) < this.state.currentLevel[0].length) {
                     currentBlock = this.state.currentLevel[y - 3 + this.state.gubbeY][x - 3 + this.state.gubbeX];
                 }
                 viewPort[y][x] = currentBlock; 

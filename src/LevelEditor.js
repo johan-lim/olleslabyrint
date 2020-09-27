@@ -8,6 +8,9 @@ export default function LevelEditor(props) {
     const availableBlocks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22];
     const initialLevel = new Array(12).fill(new Array(24).fill(10));
     const [currentBlock, setCurrentBlock] = useState(1);
+    const [height, setHeight] = useState(12);
+    const [width, setWidth] = useState(24);
+
     const [currentLevel, setCurrentLevel] = useState(initialLevel);
 
     const setcurrentBlockAs = (x, y, newItem) => {
@@ -31,14 +34,19 @@ export default function LevelEditor(props) {
         });
     }
 
-    const level = currentLevel.map((line, y) => line.map((block, x) => [20, 21].includes(block) ? (block === 20 ? <Gubbe gubbeX={x} gubbeY={y} /> : <Zombie zombieX={x} zombieY={y} gubbeX={x} gubbeY={y} />) : <span onClick={() => setcurrentBlockAs(x, y, currentBlock)}><Block key={x+y} x={x} y={y} gubbeX={x+1} gubbeY={y+1} block={block} /></span>));
+    const resetSize = () => {
+        const newLevel = new Array(parseInt(height)).fill(new Array(parseInt(width)).fill(10));
+        setCurrentLevel(newLevel);
+    }
+
+    const level = currentLevel.map((line, y) => line.map((block, x) => [20, 21].includes(block) ? (block === 20 ? <Gubbe gubbeX={x} gubbeY={y} /> : <Zombie zombieX={x} zombieY={y} gubbeX={x} gubbeY={y} />) : <span onClick={() => setcurrentBlockAs(x, y, currentBlock)}><Block isLevelEditor key={x+y} x={x} y={y} block={block} /></span>));
     return <div>
         <h1>Level editor</h1>
         <div className="level-editor">
             <div className="blocks-picker">
                 <h3>Tillgängliga block: </h3>
-                {availableBlocks.map(block => <div onClick={() => setCurrentBlock(block)} className="editor-block" style={currentBlock === block ? {border: '2px solid white'} : {}}>
-                    <Block block={block} />
+                {availableBlocks.map((block, i) => <div onClick={() => setCurrentBlock(block)} className="editor-block" style={currentBlock === block ? {border: '2px solid white'} : {}}>
+                    <Block isLevelEditor block={block} />
                 </div>)}
             </div>
             <div className="blocks-picker">
@@ -51,6 +59,12 @@ export default function LevelEditor(props) {
                 </div>
                 <div onClick={() => setCurrentBlock(23)} className="editor-block" style={currentBlock === 23 ? {border: '2px solid white'} : {}}>
                     <Zombie isMonster />
+                </div>
+                <div>
+                    <h3>Columns and Rows</h3>
+                    <input type="text" placeholder="Number of columns" onChange={(e) => setWidth(e.target.value)} value={width} />
+                    <input type="text" placeholder="Number of rows" onChange={(e) => setHeight(e.target.value)} value={height} />
+                    <button onClick={resetSize}>Reset size of board</button>
                 </div>
             </div>
             <div className="exitorandpreview">

@@ -1,7 +1,7 @@
 .key {
-    margin-top: 6%;
-    margin-left: 5%;
-    width: 16%;
+    margin-top: 3%;
+    margin-left: 1%;
+    width: 5%;
 }
 
 header span .key {
@@ -11,9 +11,7 @@ header span .key {
 }
 
 .portal {
-    width: 16%;
-    margin-top:2%;
-    margin-left: 6%;
+    width: 7%;
     animation-name: spin;
     animation-duration: 5000ms;
     animation-iteration-count: infinite;
@@ -21,9 +19,9 @@ header span .key {
 }
 
 .skott {
-    margin-left: 15%;
-    margin-top: 6%;
-    width: 3%;
+    margin-left: 3%;
+    margin-top: 3%;
+    width: 1%;
     height: 4%;
 }
 
@@ -125,42 +123,45 @@ header span .key {
 }
 
 .coin {
-    width: 12%;
+    width: 4%;
     height: 10%;
-    margin-left: 8%;
-}
-
-.powerup {
-    width: 18%;
-    height: 12%;
     margin-left: 2%;
 }
 
+.powerup {
+    width: 6%;
+    height: 12%;
+    margin-left: 1%;
+}
+
 .door {
-    margin-top: 8%;
-    width: 30%;
+    margin-top: 4%;
+    width: 7%;
     transition: 1s ease-in-out;
 }
 .door.open {
-    margin-top: 12%;
+    margin-top: 6%;
     transform: rotate(45deg);
 }
 
 .block {
-    width: 30%;
+    width: 7%;
     height: 14%;
 }
 
+.block img {
+    position: absolute;
+}
+
 .shield {
-    width: 24%;
+    width: 7%;
     height: 12%;
-    margin-top: 2%;
 }
 
 .bomb {
-    margin-top: 2%;
-    margin-left: 4%;
-    width: 16%;
+    margin-top: 1%;
+    margin-left: 0%;
+    width: 7%;
     height: 10%;
     border: 2px dashed transparent;
 }
@@ -174,8 +175,8 @@ header span .key {
 }
 
 .laser {
-    width: 8%;
-    margin-left: 8%;
+    width: 4%;
+    margin-left: 2%;
     animation-name: pulsate;
     animation-duration: 1000ms;
     animation-iteration-count: infinite;
@@ -193,17 +194,15 @@ header span .key {
 
 
 .button {
-    width: 16%;
+    width: 7%;
     height: 6%;
-    margin-left: 4%;
-    margin-top: 0%;
 }
 
 
 .cannon {
-    width: 16%;
+    width: 5%;
     height: 10%;
-    margin-left: 4%;
+    margin-left: 1%;
     margin-top: 0%;
 }
 

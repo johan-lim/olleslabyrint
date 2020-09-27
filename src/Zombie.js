@@ -40,7 +40,7 @@ function Zombie(props) {
 
 
     return (
-        <img alt="" src={props.isMonster ? lavaMonsterImage : zombieImage} className="pixelated gubbe zombie" style={ props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt((props.zombieY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.zombieX - props.gubbeX + 3) * 30)}%`, width: '26%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
+        <img alt="" src={props.isMonster ? lavaMonsterImage : zombieImage} className="pixelated gubbe zombie" style={ props.zombieX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt((props.zombieY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.zombieX - props.gubbeX + 3) * 7)}%`, width: '7%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
     );
 }
 

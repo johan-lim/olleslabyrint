@@ -56,8 +56,16 @@ function Block(props) {
         8: .05
     };
 
+
     const hasFackla = props.hasFackla;
-    const blockStyle = props.gubbeX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3) ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(props.y * 14)}%`, left: `${parseInt(props.x * 30)}%`} : { width: '50px', height: '50px'};
+    const x = props.x;
+    const y = props.y;
+    let blockStyle = {};
+    if (props.isLevelEditor) {
+        blockStyle = { opacity: 1, margin: 0, width: '30px', height: '30px', top: `${parseInt(y * 30)}px`, left: `${parseInt(x * 30)}px`};
+    } else {
+        blockStyle = { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3) ) ? distanceToOpacity[viewDistanceX + viewDistanceY] : 0, position: 'absolute', top: `${parseInt(y * 14)}%`, left: `${parseInt(x * 7)}%`};
+    }
     switch(props.block) {
         case 1:
             block = <img alt="" src={blockImage} className={blockClasses} style={blockStyle} />;
