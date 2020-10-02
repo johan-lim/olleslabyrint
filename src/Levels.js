@@ -13,9 +13,27 @@ import level12 from './levels/level12.json';
 import level13 from './levels/level13.json';
 import level14 from './levels/level14.json';
 import level15 from './levels/level15.json';
+import level16 from './levels/level16.json';
+import level17 from './levels/level17.json';
 
-
-const levels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12, level13, level14, level15];
-
+const levels = [
+    level1,
+    level2,
+    level3,
+    level4,
+    level5,
+    level6,
+    level7,
+    level8,
+    level9,
+    level10,
+    level11,
+    level12,
+    level13,
+    level14,
+    level15,
+    level16,
+    level17
+];
 
 export default levels;

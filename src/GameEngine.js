@@ -48,6 +48,7 @@ const initialState = {
     message: ''
 };
 
+const hardBlocks = [1, 4, 5, 6, 7, 8, 9, 14, 17, 25, 26];
 class GameEngine extends React.Component {
     constructor(props) {
         super(props);
@@ -346,7 +347,7 @@ class GameEngine extends React.Component {
                 this.setBoardXYAs(0);
                 this.playSoundEffect(fire);
             }
-            if ([5, 6, 7, 9].includes(this.checkGubbeCollision(direction)) && this.state.inventory.includes('hacka')) {
+            if ([26].includes(this.checkGubbeCollision(direction)) && this.state.inventory.includes('hacka')) {
                 this.setState({ hackaHealth: this.state.hackaHealth - .25 }, () => {
                     if (this.state.hackaHealth < 0) this.setState({ inventory: this.state.inventory.filter(item => item !== 'hacka')}); 
                 });
@@ -407,22 +408,22 @@ class GameEngine extends React.Component {
             }
             switch (direction) {
                 case 0:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
+                    if (!hardBlocks.includes(this.checkGubbeCollision(direction)) && this.state.gubbeX > 0) {
                         this.setState({ gubbeX: this.state.gubbeX - 1 });
                     }
                     break;
                 case 1:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
+                    if (!hardBlocks.includes(this.checkGubbeCollision(direction)) && this.state.gubbeY > 1) {
                         this.setState({ gubbeY: this.state.gubbeY - 1 });                    
                     }
                     break;
                 case 2:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < this.state.currentLevel[0].length - 2) {
+                    if (!hardBlocks.includes(this.checkGubbeCollision(direction)) && this.state.gubbeX < this.state.currentLevel[0].length - 2) {
                         this.setState({ gubbeX: this.state.gubbeX + 1 });
                     }
                     break;
                 case 3:
-                    if (![1, 4, 5, 6, 7, 8, 9, 14, 17].includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < this.state.currentLevel.length - 2) {
+                    if (!hardBlocks.includes(this.checkGubbeCollision(direction)) && this.state.gubbeY < this.state.currentLevel.length - 2) {
                         this.setState({ gubbeY: this.state.gubbeY + 1 });
                     }
                     break;

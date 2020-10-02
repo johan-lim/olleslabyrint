@@ -20,6 +20,8 @@ import bomb from './assets/bomb.png';
 import hacka from './assets/hacka.png';
 import fackla from './assets/fackla.png';
 import gun from './assets/gun.png';
+import rock from './assets/rock.png';
+import sand from './assets/sand.png';
 import './block.css';
 
 function Block(props) {
@@ -35,10 +37,11 @@ function Block(props) {
         cannon: props.block === 14,
         laser: props.block === 15,
         button: props.block === 16,
+        cannon_2: props.block === 18,
         fackla: props.block === 22,
         bomb: props.block === 17,
         active: props.bombActive,
-        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19, 22, 24].includes(props.block),
+        block: [1, 4, 5, 6, 7, 9, 10, 13, 14, 15, 16, 17, 18, 19, 22, 24, 25, 26].includes(props.block),
         open: props.doorOpen
     });
 
@@ -129,6 +132,12 @@ function Block(props) {
             break;
         case 24:
             block = <img alt="" src={gun} className={blockClasses} style={blockStyle} />;
+            break;
+        case 25:
+            block = <img alt="" src={rock} className={blockClasses} style={blockStyle} />;
+            break;
+        case 26:
+            block = <img alt="" src={sand} className={blockClasses} style={blockStyle} />;
             break;
         default:
             break;

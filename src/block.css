@@ -1,7 +1,7 @@
 .key {
     margin-top: 3%;
     margin-left: 1%;
-    width: 5%;
+    width: 4%;
 }
 
 header span .key {
@@ -204,6 +204,12 @@ header span .key {
     height: 10%;
     margin-left: 1%;
     margin-top: 0%;
+}
+
+.cannon_2 {
+    margin-left: 1%;
+    width: 5%;
+    height: 7%;
 }
 
 @media only screen and (min-width: 900px) {

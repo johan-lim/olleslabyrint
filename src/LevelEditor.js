@@ -5,7 +5,7 @@ import Zombie from './Zombie';
 import Gubbe from './Gubbe';
 
 export default function LevelEditor(props) {
-    const availableBlocks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22];
+    const availableBlocks = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 24, 25, 26];
     const initialLevel = new Array(12).fill(new Array(24).fill(10));
     const [currentBlock, setCurrentBlock] = useState(1);
     const [height, setHeight] = useState(12);
