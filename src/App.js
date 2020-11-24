@@ -13,6 +13,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 function App() {
   const [gameMode, setGameMode] = useState('splash');
+  const [multiPlayerRoom, setMultiPlayerRoom] = useState('');
+  const [playerName, setPlayerName] = useState('');
+
   const playGame = () => {
     play.play();
     setGameMode('game');
@@ -25,11 +28,26 @@ function App() {
   const gotoEditor = () => {
     setGameMode('editor');
   }
+
+  const updateMultiPlayerRoom = (e) => setMultiPlayerRoom(e.target.value);
   
   return (
     <div className="App">
-        {gameMode === 'splash' && <SplashScreen playGame={playGame} />}
-        {gameMode === 'game' && <GameEngine gotoEditor={gotoEditor} finishGame={finishGame} />}
+        {gameMode === 'splash' &&
+          <SplashScreen
+            playGame={playGame}
+            updateMultiPlayerRoom={updateMultiPlayerRoom}
+            multiPlayerRoom={multiPlayerRoom}
+            playerName={playerName}
+            setPlayerName={setPlayerName}
+          />}
+        {gameMode === 'game' &&
+          <GameEngine
+            gotoEditor={gotoEditor}
+            finishGame={finishGame}
+            multiPlayerRoom={multiPlayerRoom}
+            playerName={playerName}
+          />}
         {gameMode === 'editor' && <LevelEditor playGame={playGame} />}
         {gameMode === 'end' && <EndScreen />}
     </div>

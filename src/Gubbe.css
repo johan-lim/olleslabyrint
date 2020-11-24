@@ -8,3 +8,13 @@
     border: 5px dashed brown;
 }
 
+.nametag {
+    position: absolute;
+    width: 7%;
+    height: 5%;
+    color: #fff;
+    border-radius: 20%;
+    text-shadow: 2px 2px #123;
+    text-transform: uppercase;
+    font-size: .8em;
+}

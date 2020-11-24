@@ -46,10 +46,32 @@ h3 {
   position: absolute;
   width: 18%;
   left: 20%;
+  top: 25vw;
+}
+
+.entercode {
+  position: absolute;
+  width: 27%;
+  left: 20%;
   top: 33vw;
 }
 
-.playbutton:hover {
+.multiplayer, .nameentry {
+  position: absolute;
+  width: 25%;
+  left: 50%;
+  top: 35vw;
+  height: 7%;
+  font-size: 1.5em;
+  font-family: 'Amatic SC', cursive;
+  background-color: rgba(255, 255, 255, .9);
+}
+
+.nameentry {
+  top: 27vw;
+}
+
+.playbutton:hover, .entercode:hover {
   opacity: .6;
   transform: scale(1.1);
 }
