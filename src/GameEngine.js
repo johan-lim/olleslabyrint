@@ -5,6 +5,7 @@ import './GameEngine.css';
 import Gubbe from './Gubbe';
 import Zombie from './Zombie';
 import Slave from './Slave';
+import Master from './Slave';
 import Block from './Block';
 import nyckelImage from './assets/nyckel.png';
 import shieldImage from './assets/sköld.png';
@@ -15,6 +16,7 @@ import GunButton from './GunButton';
 import Buttons from './Button';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
+import ChatLog from './ChatLog';
 import {
     gubbeDie,
     peng,
@@ -34,7 +36,9 @@ import {
     getGun } from './Audio';
 
 import levels from '../src/Levels';
-const socket = io('https://ollesspelserver.herokuapp.com', { transports: ['websocket'], rejectUnauthorized: false });
+// const socket = io('http://localhost:3003', { transports: ['websocket'], rejectUnauthorized: false });
+
+const socket = io('https://ollesspelserver.herokuapp.com/', { transports: ['websocket'], rejectUnauthorized: false });
 
 
 const initialState = {
@@ -63,10 +67,11 @@ class GameEngine extends React.Component {
             lives: 3,
             gameMode: props.multiPlayerRoom ? 'slave' : 'master',
             playerName: props.playerName,
-            otherPlayerName: '',
+            slaves: {},
             roomNumber: props.multiPlayerRoom,
             music: false,
             soundEffects: true,
+            chatMessages: [],
             currentLevel: levels[0].blocks,
             zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
                 ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
@@ -91,7 +96,7 @@ class GameEngine extends React.Component {
             gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
             bullets: this.getIndexOfK(levels[this.state.level].blocks, 18).map(b =>
                 ({ initialX: b[1], initialY: b[0], moving: false }))
-        } );
+        });
     }
 
     gameover = () => {
@@ -123,6 +128,17 @@ class GameEngine extends React.Component {
         const roomNumber = this.props.multiPlayerRoom || Math.random().toString(36).substring(7);
         this.setState({ roomNumber: roomNumber });
         socket.emit('join', roomNumber);
+        socket.on('nextLevel received', (level) => {
+            this.playSoundEffect(win);
+            this.showMessage('vann');
+            setTimeout(() => {
+                this.setState({ level });
+                this.reset();
+            }, 2000)
+        });
+        socket.on('chatMessage received', (message) => {
+            this.setState({ chatMessages: [...this.state.chatMessages, message ]});
+        })
         if (this.state.gameMode === 'slave') {
             socket.on('syncFromMaster received', (synchedState) => {
                 this.setState({
@@ -132,18 +148,23 @@ class GameEngine extends React.Component {
                     masterX: synchedState.gubbeX,
                     masterY: synchedState.gubbeY,
                     masterDirection: synchedState.gubbeDirection,
-                    otherPlayerName: synchedState.playerName
+                    masterName: synchedState.playerName,
+                    slaves: synchedState.slaves
                 });
             });
         } else {
             socket.on('syncFromSlave received', (synchedState) => {
                 this.setState({
-                    slaveDirection: synchedState.gubbeDirection,
-                    slaveX: synchedState.gubbeX,
-                    slaveY: synchedState.gubbeY,
-                    otherPlayerName: synchedState.playerName,
-                    currentLevel: synchedState.currentLevel,
+                    slaves: {...this.state.slaves, [synchedState.playerName]: {
+                        slaveDirection: synchedState.gubbeDirection,
+                        slaveX: synchedState.gubbeX,
+                        slaveY: synchedState.gubbeY,
+                        playerName: synchedState.playerName    
+                    }}
                 });
+            });
+            socket.on('syncLevelFromSlave received', (level) => {
+                this.setState({ currentLevel: level });
             });
         }
 
@@ -180,18 +201,21 @@ class GameEngine extends React.Component {
 
     keyBoard = (e) => {
         if (e.keyCode === 69) {
-            this.props.gotoEditor();
+            // this.props.gotoEditor();
         } else if (e.keyCode === 74){
-            this.setState({ level: this.state.level + 1 }, () => {
-                this.reset();
-            });
+            // socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
         } else if (e.keyCode === 32){
             this.fireGun();
-        } else if (e.keyCode === 71){
-            this.moveEntirePlayingField();
         } else {
             this.moveGubbe(e.keyCode - 37);
         }
+    }
+
+    showMessage = (message) => {
+        this.setState({ message });
+        setTimeout(() => {
+            this.setState({ message: '' });
+        }, 2000)
     }
 
     syncState = () => {
@@ -202,6 +226,10 @@ class GameEngine extends React.Component {
         }
     }
 
+    synchLevelFromSlave = (level) => {
+        socket.emit('syncLevelFromSlave', this.state.roomNumber, level);
+    }
+    
     checkGubbeCollision = (direction) => {
         switch (direction) {
             case 0:
@@ -226,6 +254,7 @@ class GameEngine extends React.Component {
         if (this.state.gubbeX === zombie.zombieX && this.state.gubbeY === zombie.zombieY) {
             if (!this.state.inventory.includes('shield')) {
                 this.gubbeDied();
+                this.zombieDied(zombie);
             } else {
                 this.setState({ shieldHealth: this.state.shieldHealth - .2 });
                 this.playSoundEffect(shieldUse);
@@ -256,22 +285,25 @@ class GameEngine extends React.Component {
             if (block === 15) return 0;
             return block;
         }));
-        this.setState({ currentLevel: level });
+        if (this.state.gameMode === 'master') {
+            this.setState({ currentLevel: level });
+        } else {
+            this.synchLevelFromSlave(level);
+        }
     }
 
     gubbeDied = () => {
         this.playSoundEffect(gubbeDie);
-        this.setState({ message: 'död', gubbeLocked: true, lives: this.state.lives - 1  });
-        if (this.state.lives < 1) {
-            this.setState({ message: 'gameover' });
-            setTimeout(() => {
-                this.gameover();
-            }, 4000)
-        } else {
-            setTimeout(() => {
-                this.reset();
-            }, 2000)    
-        }
+        this.showMessage('död');
+        this.setState({
+            gubbeX: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][1],
+            gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
+            chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'förlorade ett liv! 😭'}]
+        });
+    }
+
+    sendChatMessage = (message) => {
+        socket.emit('chatMessage', this.state.roomNumber, {player: this.state.playerName, message});
     }
 
     findPortalAndTeleport = (direction) => {
@@ -365,31 +397,56 @@ class GameEngine extends React.Component {
             if (indexToUpdate[0] === y && indexToUpdate[1] === x) return newItem;
             return block;
         }));
-        this.setState({ currentLevel: level });
+        if (this.state.gameMode === 'master') {
+            this.setState({ currentLevel: level });
+        } else {
+            this.synchLevelFromSlave(level);
+        }
     }
 
     moveGubbe = (direction) => {
         if (this.state.gubbeLocked) return;
         this.setState({ gubbeDirection: direction }, () => {
             if (this.checkGubbeCollision(direction) === 2) {
-                this.setState({ inventory: [...this.state.inventory, 'key'], points: this.state.points + 5 });
+                this.setState({
+                    inventory: [...this.state.inventory, 'key'],
+                    points: this.state.points + 5,
+                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'tog nyckeln! 🗝'}]
+                });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
             if (this.checkGubbeCollision(direction) === 24) {
-                this.setState({ inventory: [...this.state.inventory, 'gun'], points: this.state.points + 5 });
+                this.setState({
+                    inventory: [...this.state.inventory, 'gun'],
+                    points: this.state.points + 5,
+                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en pistol! 🔫'}]
+
+                });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(getGun);
             }
             if (this.checkGubbeCollision(direction) === 19) {
-                this.setState({ inventory: [...this.state.inventory, 'hacka'], points: this.state.points + 5, hackaHealth: 1 });
+                this.setState({
+                    inventory: [...this.state.inventory, 'hacka'],
+                    points: this.state.points + 5, hackaHealth: 1,
+                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en hacka! ⛏️'}]
+
+                });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
             if (this.checkGubbeCollision(direction) === 22) {
-                this.setState({ inventory: [...this.state.inventory, 'fackla'], points: this.state.points + 5 });
+                this.setState({
+                    inventory: [...this.state.inventory, 'fackla'],
+                    points: this.state.points + 5,
+                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en fackla! 🔥'}]
+                });
                 setTimeout(() => {
-                    this.setState({ inventory: this.state.inventory.filter(item => item !== 'fackla')});
+                    this.setState({
+                        inventory: this.state.inventory.filter(item => item !== 'fackla'),
+                        chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: '\'s fackla slocknade!'}]
+                    });
                 }, 15000);
                 this.setBoardXYAs(0);
                 this.playSoundEffect(fire);
@@ -407,7 +464,8 @@ class GameEngine extends React.Component {
                 this.playSoundEffect(peng);
             }
             if (this.checkGubbeCollision(direction) === 12) {
-                this.setState({ lives: this.state.lives + 1 });
+                this.setState({ lives: this.state.lives + 1, chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'fick ett extraliv! ❤️'}]
+            });
                 this.setBoardXYAs(0);
                 this.playSoundEffect(powerup);
             }
@@ -415,7 +473,11 @@ class GameEngine extends React.Component {
                 if (this.state.inventory.includes('shield')) {
                     this.setState({ points: this.state.points + 10, shieldHealth: 1 });
                 } else {
-                    this.setState({ inventory: [...this.state.inventory, 'shield'], points: this.state.points + 10, shieldHealth: 1 });
+                    this.setState({
+                        inventory: [...this.state.inventory, 'shield'],
+                        points: this.state.points + 10, shieldHealth: 1,
+                        chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en sköld!'}]
+                    });
                 }
                 this.setBoardXYAs(0);
                 this.playSoundEffect(shield);
@@ -424,10 +486,12 @@ class GameEngine extends React.Component {
                 this.gubbeDied();
             }
             if (this.checkGubbeCollision(direction) === 16) {
+                this.setState({ chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'stängde av lasern!'}]})
                 this.removeLaser();
                 this.playSoundEffect(laser);
             }
             if (this.checkGubbeCollision(direction) === 17) {
+                this.setState({ chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'aktiverade en bomb! 💣'}]})
                 this.setBombActive();
                 this.playSoundEffect(laser);
             }
@@ -441,15 +505,12 @@ class GameEngine extends React.Component {
             }
             if (this.checkGubbeCollision(direction) === 3 && this.state.inventory.includes('key')) {
                 this.setState({ doorOpen: true });
-                this.playSoundEffect(win);
-                this.setState({ message: 'vann', level: this.state.level + 1, points: this.state.points + 10, gubbeLocked: true}, () => {
+                this.setState({ level: this.state.level + 1, points: this.state.points + 10, gubbeLocked: true}, () => {
                     if (this.state.level >= levels.length) {
                         music.pause();
                         this.props.finishGame();
                     } else {
-                        setTimeout(() => {
-                            this.reset();
-                        }, 2000);    
+                        socket.emit('nextLevel', this.state.roomNumber, this.state.level);
                     }
                 })
             }
@@ -500,7 +561,17 @@ class GameEngine extends React.Component {
             const matrix = this.state.currentLevel.map(row => row.map(b => [0, 15].includes(b) ? 0 : 1));
             const grid = new PF.Grid(matrix);
             const finder = new PF.AStarFinder();
-            const path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
+            let path;
+            /*const distanceFromGubbeX = Math.abs(zombie.zombieX - this.state.gubbeX);
+            const distanceFromGubbeY = Math.abs(zombie.zombieY - this.state.gubbeY);
+            const distanceFromSlaveX = Math.abs(zombie.zombieX - this.state.slaveX);
+            const distanceFromSlaveY = Math.abs(zombie.zombieY - this.state.slaveY);
+            const slaveIsCloser = (distanceFromSlaveX + distanceFromSlaveY < distanceFromGubbeX + distanceFromGubbeY);*/
+            /*if (slaveIsCloser) {
+                path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.slaveX, this.state.slaveY, grid);
+            } else {*/
+                path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
+            //}
             if (path.length > 1) {
                 if (zombie.zombieX > path[1][0]) zombie.zombieDirection = 0;
                 if (zombie.zombieX < path[1][0]) zombie.zombieDirection = 2;
@@ -666,7 +737,7 @@ class GameEngine extends React.Component {
                         <span>Hitta nyckeln 🗝 och öppna dörren</span>
                         <span onClick={this.toggleMusic}>Musik {this.state.music ? 'på' : 'av'}</span>
                         <span onClick={this.toggleSoundEffects}>Ljudeffekter {this.state.soundEffects ? 'på' : 'av'}</span>
-                        {this.state.gameMode === 'master' && <span>Mitt rum för multiplayer <input readOnly value={this.state.roomNumber} /></span>}
+                        {this.state.gameMode === 'master' && <span>Multiplayerkod <input className="code" readOnly value={this.state.roomNumber} /></span>}
                     </div>
                     <div className="info">
                         <span>Poäng: {this.state.points}</span>
@@ -677,20 +748,20 @@ class GameEngine extends React.Component {
                 </header>
                 <div className="level">
                     {level}
-                    {this.state.gameMode === 'master' && this.state.slaveX &&
+                    {Object.keys(this.state.slaves).length > 0 &&
+                    Object.keys(this.state.slaves).filter(slave => slave !== this.state.playerName).map(player =>
                         <Slave
-                            hasFackla={this.state.inventory.includes('fackla')}
-                            slaveName={this.state.otherPlayerName}
-                            slaveDirection={this.state.slaveDirection}
-                            slaveX={this.state.slaveX}
-                            slaveY={this.state.slaveY}
+                            slaveName={this.state.slaves[player].playerName}
+                            key={player}
+                            slaveDirection={this.state.slaves[player].slaveDirection}
+                            slaveX={this.state.slaves[player].slaveX}
+                            slaveY={this.state.slaves[player].slaveY}
                             gubbeX={this.state.gubbeX}
                             gubbeY={this.state.gubbeY} />
-                    }
+                    )};
                     {this.state.gameMode === 'slave' &&
-                        <Slave
-                            hasFackla={this.state.inventory.includes('fackla')}
-                            slaveName={this.state.otherPlayerName}
+                        <Master
+                            slaveName={this.state.masterName}
                             slaveDirection={this.state.masterDirection}
                             slaveX={this.state.masterX}
                             slaveY={this.state.masterY}
@@ -708,6 +779,13 @@ class GameEngine extends React.Component {
                     {zombies}
                     {bullets}
                     {gunBullets}
+                </div>
+                <ChatLog messages={this.state.chatMessages} sendMessage={this.sendChatMessage} />
+                <div className="playersonline">
+                    <h3>Spelare online:</h3>
+                    <p>{this.state.playerName}</p>
+                    {Object.keys(this.state.slaves).filter(name => name !== this.state.playerName).map(name => <p key={name}>{name}</p>)}
+                {this.state.gameMode === 'slave' && <p>{this.state.masterName}</p>}
                 </div>
                 <InfoMessage message={this.state.message} />
                 <Buttons move={this.buttonPress}/>

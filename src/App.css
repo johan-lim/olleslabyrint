@@ -45,8 +45,74 @@ h3 {
 .playbutton {
   position: absolute;
   width: 18%;
-  left: 20%;
-  top: 25vw;
+  left: 50%;
+  top: 26vw;
+}
+
+.chatwindow {
+  border: 1px solid white;
+  position: absolute;
+  width: 20%;
+  height: 40%;
+  top: 24vh;
+  right: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatwindow .sendbutton {
+  display: none;
+  width: 100%;
+}
+
+.playersonline {
+  position: absolute;
+  width: 20%;
+  top: 24vh;
+  left: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.playersonline p {
+  margin: 0;
+}
+
+.chatwindow h3 {
+  margin: 0;
+}
+
+.chatwindow .messages {
+  height: 90%;
+  width: 90%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.chatwindow .messages p {
+  margin: 0;
+}
+
+.chatwindow .messages p .player {
+  color: red;
+}
+.chatwindow .messages p .action {
+  color: green;
+}
+
+
+.chatwindow .chatinput {
+  width: 98%;
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.3em;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
 }
 
 .entercode {
@@ -59,12 +125,20 @@ h3 {
 .multiplayer, .nameentry {
   position: absolute;
   width: 25%;
-  left: 50%;
+  left: 20%;
   top: 35vw;
   height: 7%;
   font-size: 1.5em;
   font-family: 'Amatic SC', cursive;
   background-color: rgba(255, 255, 255, .9);
+}
+
+.code {
+  font-family: monospace;
+  font-size: 1.5em;
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
 }
 
 .nameentry {
@@ -85,5 +159,16 @@ h3 {
 @media only screen and (max-width: 900px) {
   .controls_info {
     display: none;
+  }
+  .chatwindow {
+    left: 2%;
+  }
+  .playersonline {
+    left: auto;
+    right: 2%;
+    top: 33vh;
+  }
+  .chatwindow .sendbutton {
+    display: block;
   }
 }
