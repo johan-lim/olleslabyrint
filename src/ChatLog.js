@@ -27,7 +27,7 @@ function ChatLog(props) {
                     
                 )}
             </div>
-            <input className="chatinput" type="text" value={currentMessage} onKeyDown={checkForEnter} onChange={(e) => setCurrentMessage(e.target.value)} />
+            <input className="chatinput" placeholder="Skriv meddelande här..." type="text" value={currentMessage} onKeyDown={checkForEnter} onChange={(e) => setCurrentMessage(e.target.value)} />
             <button className="sendbutton" onClick={sendMessage}>Skicka</button>
         </div>
     )

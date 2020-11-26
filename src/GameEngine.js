@@ -7,15 +7,11 @@ import Zombie from './Zombie';
 import Slave from './Slave';
 import Master from './Slave';
 import Block from './Block';
-import nyckelImage from './assets/nyckel.png';
-import shieldImage from './assets/sköld.png';
-import hackaImage from './assets/hacka.png';
-import facklaImage from './assets/fackla.png';
-import gunImage from './assets/gun.png';
 import GunButton from './GunButton';
 import Buttons from './Button';
 import Skott from './Skott';
 import InfoMessage from './InfoMessage';
+import InfoBox from './InfoBox';
 import ChatLog from './ChatLog';
 import {
     gubbeDie,
@@ -72,6 +68,7 @@ class GameEngine extends React.Component {
             music: false,
             soundEffects: true,
             chatMessages: [],
+            playersSafe: [],
             currentLevel: levels[0].blocks,
             zombies: this.getIndexOfK(levels[0].blocks, 21).map(z =>
                 ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
@@ -88,6 +85,7 @@ class GameEngine extends React.Component {
         this.setState({
             ...initialState,
             currentLevel: levels[this.state.level].blocks,
+            playersSafe: [],
             zombies: this.getIndexOfK(levels[this.state.level].blocks, 21).map(z =>
                 ({ initialX: z[1], initialY: z[0], zombieDirection: 3, zombieSteps: 0 }))
                 .concat(this.getIndexOfK(levels[this.state.level].blocks, 23).map(z =>
@@ -131,6 +129,7 @@ class GameEngine extends React.Component {
         socket.on('nextLevel received', (level) => {
             this.playSoundEffect(win);
             this.showMessage('vann');
+            this.setState({ playersSafe: [] });
             setTimeout(() => {
                 this.setState({ level });
                 this.reset();
@@ -138,7 +137,10 @@ class GameEngine extends React.Component {
         });
         socket.on('chatMessage received', (message) => {
             this.setState({ chatMessages: [...this.state.chatMessages, message ]});
-        })
+        });
+        socket.on('doorOpen received', () => {
+            this.setState({ doorOpen: true});
+        });
         if (this.state.gameMode === 'slave') {
             socket.on('syncFromMaster received', (synchedState) => {
                 this.setState({
@@ -159,13 +161,18 @@ class GameEngine extends React.Component {
                         slaveDirection: synchedState.gubbeDirection,
                         slaveX: synchedState.gubbeX,
                         slaveY: synchedState.gubbeY,
-                        playerName: synchedState.playerName    
+                        playerName: synchedState.playerName
                     }}
                 });
             });
             socket.on('syncLevelFromSlave received', (level) => {
                 this.setState({ currentLevel: level });
             });
+            socket.on('playerSafe received', (playerName) => {
+                if (!this.state.playersSafe.includes(playerName)) {
+                    this.setState({ playersSafe: [...this.state.playersSafe, playerName]});
+                } 
+            })
         }
 
         music.loop = true;
@@ -176,6 +183,11 @@ class GameEngine extends React.Component {
         this.gunTimer = setInterval(() => {
             this.bulletsMove();
         }, 200);
+        if (this.state.gameMode === 'master') {
+            this.checkSafetyTimer = setInterval(() => {
+                this.checkIfAllPlayersAreSafe();
+            }, 200);    
+        }
         this.synchTimer = setInterval(() => {
             this.syncState();
         }, 200);
@@ -298,8 +310,12 @@ class GameEngine extends React.Component {
         this.setState({
             gubbeX: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][1],
             gubbeY: this.getIndexOfK(levels[this.state.level].blocks, 20)[0][0],
-            chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'förlorade ett liv! 😭'}]
         });
+        this.sendAction('förlorade ett liv! 😭');
+    }
+
+    sendAction = (action) => {
+        socket.emit('chatMessage', this.state.roomNumber, {player: this.state.playerName, action});
     }
 
     sendChatMessage = (message) => {
@@ -327,6 +343,21 @@ class GameEngine extends React.Component {
         const portalIndices = this.getIndexOfK(this.state.currentLevel, 8);
         const newPosition = portalIndices.find(index => JSON.stringify(index) !== JSON.stringify(currentPortal));
         this.setState({ gubbeY: newPosition[0], gubbeX: newPosition[1] });
+    }
+
+    checkIfAllPlayersAreSafe = () => {
+        console.log(this.state.playersSafe.length, Object.keys(this.state.slaves).length);
+        if ((this.state.playersSafe.length === Object.keys(this.state.slaves).length + 1) && this.state.gameMode === 'master') {
+            console.log('alla är safe!')
+            this.setState({ level: this.state.level + 1, points: this.state.points + 10, gubbeLocked: true}, () => {
+                if (this.state.level >= levels.length) {
+                    music.pause();
+                    this.props.finishGame();
+                } else {
+                    socket.emit('nextLevel', this.state.roomNumber, this.state.level);
+                }
+            })
+        }
     }
 
     setBombActive = () => {
@@ -411,8 +442,8 @@ class GameEngine extends React.Component {
                 this.setState({
                     inventory: [...this.state.inventory, 'key'],
                     points: this.state.points + 5,
-                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'tog nyckeln! 🗝'}]
                 });
+                this.sendAction('tog nyckeln! 🗝');
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
@@ -420,9 +451,8 @@ class GameEngine extends React.Component {
                 this.setState({
                     inventory: [...this.state.inventory, 'gun'],
                     points: this.state.points + 5,
-                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en pistol! 🔫'}]
-
                 });
+                this.sendAction('hittade en pistol! 🔫');
                 this.setBoardXYAs(0);
                 this.playSoundEffect(getGun);
             }
@@ -430,9 +460,8 @@ class GameEngine extends React.Component {
                 this.setState({
                     inventory: [...this.state.inventory, 'hacka'],
                     points: this.state.points + 5, hackaHealth: 1,
-                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en hacka! ⛏️'}]
-
                 });
+                this.sendAction('hittade en hacka! ⛏️');
                 this.setBoardXYAs(0);
                 this.playSoundEffect(key);
             }
@@ -440,13 +469,14 @@ class GameEngine extends React.Component {
                 this.setState({
                     inventory: [...this.state.inventory, 'fackla'],
                     points: this.state.points + 5,
-                    chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en fackla! 🔥'}]
                 });
+                this.sendAction('hittade en fackla! 🔥');
                 setTimeout(() => {
                     this.setState({
                         inventory: this.state.inventory.filter(item => item !== 'fackla'),
-                        chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: '\'s fackla slocknade!'}]
                     });
+                    this.sendAction('\'s fackla slocknade!');
+
                 }, 15000);
                 this.setBoardXYAs(0);
                 this.playSoundEffect(fire);
@@ -464,8 +494,8 @@ class GameEngine extends React.Component {
                 this.playSoundEffect(peng);
             }
             if (this.checkGubbeCollision(direction) === 12) {
-                this.setState({ lives: this.state.lives + 1, chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'fick ett extraliv! ❤️'}]
-            });
+                this.setState({ lives: this.state.lives + 1 });
+                this.sendAction('fick ett extraliv! ❤️');
                 this.setBoardXYAs(0);
                 this.playSoundEffect(powerup);
             }
@@ -475,9 +505,9 @@ class GameEngine extends React.Component {
                 } else {
                     this.setState({
                         inventory: [...this.state.inventory, 'shield'],
-                        points: this.state.points + 10, shieldHealth: 1,
-                        chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'hittade en sköld!'}]
+                        points: this.state.points + 10, shieldHealth: 1
                     });
+                    this.sendAction('hittade en sköld!');
                 }
                 this.setBoardXYAs(0);
                 this.playSoundEffect(shield);
@@ -486,32 +516,35 @@ class GameEngine extends React.Component {
                 this.gubbeDied();
             }
             if (this.checkGubbeCollision(direction) === 16) {
-                this.setState({ chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'stängde av lasern!'}]})
+                this.sendAction('stängde av lasern!');
                 this.removeLaser();
                 this.playSoundEffect(laser);
             }
             if (this.checkGubbeCollision(direction) === 17) {
-                this.setState({ chatMessages: [...this.state.chatMessages, { player: this.state.playerName, action: 'aktiverade en bomb! 💣'}]})
+                this.sendAction('aktiverade en bomb! 💣');
                 this.setBombActive();
                 this.playSoundEffect(laser);
             }
-            if (this.checkGubbeCollision(direction) === 3 && !this.state.inventory.includes('key')) {
+            if (this.checkGubbeCollision(direction) === 3 && !this.state.inventory.includes('key') && !this.state.doorOpen) {
                 this.playSoundEffect(noKey);
-                return;
             }
             if (this.checkGubbeCollision(direction) === 8) {
                 this.findPortalAndTeleport(direction);
                 this.playSoundEffect(portal);
             }
-            if (this.checkGubbeCollision(direction) === 3 && this.state.inventory.includes('key')) {
-                this.setState({ doorOpen: true });
-                this.setState({ level: this.state.level + 1, points: this.state.points + 10, gubbeLocked: true}, () => {
-                    if (this.state.level >= levels.length) {
-                        music.pause();
-                        this.props.finishGame();
-                    } else {
-                        socket.emit('nextLevel', this.state.roomNumber, this.state.level);
-                    }
+            if (this.checkGubbeCollision(direction) === 3 && this.state.inventory.includes('key') && !this.state.doorOpen) {
+                this.setState({
+                    doorOpen: true
+                });
+                this.sendAction('har öppnat dörren! 🚪');
+                socket.emit('doorOpen', this.state.roomNumber);
+            }
+            if (this.checkGubbeCollision(direction) === 3 && this.state.doorOpen) {
+                this.setState({
+                    gubbeLocked: true
+                }, () => {
+                    this.sendAction('är ute! 🎉');
+                    socket.emit('playerSafe', this.state.roomNumber, this.state.playerName);
                 })
             }
             switch (direction) {
@@ -603,7 +636,7 @@ class GameEngine extends React.Component {
 
 
     bulletsMove = () => {
-        if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0 || this.state.gamemode === 'slave') return;
+        if (this.state.gubbeLocked || this.getIndexOfK(this.state.currentLevel, 18).length === 0 || this.state.gameMode === 'slave') return;
         const oldBullets = [...this.state.bullets];
         const newBullets = oldBullets.map(bullet => {
             if (!bullet.moving) {
@@ -694,15 +727,6 @@ class GameEngine extends React.Component {
                 gubbeX={this.state.gubbeX}
                 gubbeY={this.state.gubbeY} 
             />));
-        const inventory = {
-            'key': <img key="key" alt="" className="key" src={nyckelImage}/>,
-            'shield': <img style={{ opacity: this.state.shieldHealth }} key="shield" alt="" className="key" src={shieldImage}/>,
-            'hacka': <img style={{ opacity: this.state.hackaHealth }} key="hacka" alt="" className="key" src={hackaImage}/>,
-            'fackla': <img key="fackla" alt="" className="key" src={facklaImage}/>,
-            'gun': <img key="gun" alt="" className="key" src={gunImage}/>
-
-        };
-
         const bullets = this.state.bullets.map((b, i) =>
             <Skott
                 key={i}
@@ -728,23 +752,24 @@ class GameEngine extends React.Component {
         return (
             <div className="App">
                 <header>
-                    <div>
+                    <div className="logo">
                         <h1>Labyrinten</h1>
                         <h3>av Olle Kanarp</h3>
                     </div>
-                    <div className="info">
-                        <span className="controls_info">Styr med piltangenterna <span>⬆️ ⬇️ ➡️ ⬅️</span></span>
-                        <span>Hitta nyckeln 🗝 och öppna dörren</span>
-                        <span onClick={this.toggleMusic}>Musik {this.state.music ? 'på' : 'av'}</span>
-                        <span onClick={this.toggleSoundEffects}>Ljudeffekter {this.state.soundEffects ? 'på' : 'av'}</span>
-                        {this.state.gameMode === 'master' && <span>Multiplayerkod <input className="code" readOnly value={this.state.roomNumber} /></span>}
-                    </div>
-                    <div className="info">
-                        <span>Poäng: {this.state.points}</span>
-                        <span>Nivå: {this.state.level + 1}</span>
-                        <span>Liv: {this.state.lives}</span>
-                        <span>Ryggsäck: {this.state.inventory.map(item => inventory[item])}</span>
-                    </div>
+                    <InfoBox
+                        shieldHealth={this.state.shield}
+                        hackaHealth={this.state.hackaHealth}
+                        music={this.state.music}
+                        soundEffects={this.state.soundEffects}
+                        roomNumber={this.state.roomNumber}
+                        gameMode={this.state.gameMode}
+                        points={this.state.points}
+                        level={this.state.level}
+                        lives={this.state.lives}
+                        inventory={this.state.inventory}
+                        toggleMusic={this.toggleMusic}
+                        toggleSoundEffects={this.toggleSoundEffects}
+                    />                        
                 </header>
                 <div className="level">
                     {level}

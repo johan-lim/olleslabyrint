@@ -20,7 +20,7 @@ body {
   overflow: hidden;
   color: white;
 }
-h3 {
+.logo h3 {
   margin-top: -25px;
 }
 
@@ -50,7 +50,6 @@ h3 {
 }
 
 .chatwindow {
-  border: 1px solid white;
   position: absolute;
   width: 20%;
   height: 40%;
@@ -82,8 +81,9 @@ h3 {
   margin: 0;
 }
 
-.chatwindow h3 {
-  margin: 0;
+.chatwindow h3, .playersonline h3 {
+  background: #1a237e;
+  width: 100%;
 }
 
 .chatwindow .messages {
@@ -111,7 +111,7 @@ h3 {
   font-family: 'Amatic SC', cursive;
   font-size: 1.3em;
   background-color: transparent;
-  border: 1px solid white;
+  border: 1px solid #1a237e;
   color: white;
 }
 
@@ -139,6 +139,7 @@ h3 {
   background-color: transparent;
   border: 1px solid white;
   color: white;
+  width: 10rem;
 }
 
 .nameentry {
@@ -156,19 +157,33 @@ h3 {
   font-size: calc(7px + 2vmin);
 }
 
+.logo {
+  flex: 1;
+}
+
 @media only screen and (max-width: 900px) {
   .controls_info {
     display: none;
   }
   .chatwindow {
     left: 2%;
+    top: 45vh;
+    border: 1px solid #666;
+    border-radius: .5rem;
   }
   .playersonline {
-    left: auto;
-    right: 2%;
-    top: 33vh;
+    left: 2%;
+    top: 26vh;
+    border: 1px solid #666;
+    border-radius: .5rem;
   }
   .chatwindow .sendbutton {
     display: block;
+  }
+  .code {
+    font-family: monospace;
+    font-size: 1em;
+    background-color: transparent;
+    width: 5rem;
   }
 }

@@ -14,6 +14,9 @@
 
 h3 {
     margin: 0;
+}
+
+.logo h3 {
     margin-right: 2rem;
 }
 

@@ -41,7 +41,7 @@ function SlaveGubbe(props) {
 
     return (
         <>
-            <div className="nametag" style={{ top: `${parseInt((props.slaveY - props.gubbeY + 3) * 13)}%`, left: `${parseInt((props.slaveX - props.gubbeX + 3) * 7)}%`}}>{props.slaveName}</div>
+            <div className="nametag" style={{ opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt((props.slaveY - props.gubbeY + 3) * 13)}%`, left: `${parseInt((props.slaveX - props.gubbeX + 3) * 7)}%`}}>{props.slaveName}</div>
             <img alt="" src={props.hasFackla ? gubbeFacklaImage : gubbeImage} className="pixelated gubbe" style={ props.slaveX ? { opacity: (viewDistanceX < (hasFackla ? 5 : 3) && viewDistanceY < (hasFackla ? 5 : 3)) ? distanceToOpacity[viewDistanceX]: 0, top: `${parseInt((props.slaveY - props.gubbeY + 3) * 14)}%`, left: `${parseInt((props.slaveX - props.gubbeX + 3) * 7)}%`, width: '7%', transform: `rotate(${degreesOfRotation}deg)`} : { position: 'initial', width: '50px', height: '50px'} } />
         </>
     );
