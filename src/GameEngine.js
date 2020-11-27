@@ -215,7 +215,7 @@ class GameEngine extends React.Component {
         if (e.keyCode === 69) {
             // this.props.gotoEditor();
         } else if (e.keyCode === 74){
-            // socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
+            socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
         } else if (e.keyCode === 32){
             this.fireGun();
         } else {
@@ -346,9 +346,7 @@ class GameEngine extends React.Component {
     }
 
     checkIfAllPlayersAreSafe = () => {
-        console.log(this.state.playersSafe.length, Object.keys(this.state.slaves).length);
         if ((this.state.playersSafe.length === Object.keys(this.state.slaves).length + 1) && this.state.gameMode === 'master') {
-            console.log('alla är safe!')
             this.setState({ level: this.state.level + 1, points: this.state.points + 10, gubbeLocked: true}, () => {
                 if (this.state.level >= levels.length) {
                     music.pause();
