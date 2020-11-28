@@ -45,8 +45,50 @@ body {
 .playbutton {
   position: absolute;
   width: 18%;
-  left: 50%;
-  top: 26vw;
+  left: 20%;
+  top: 32vw;
+}
+
+.chooseplaymode {
+  position: absolute;
+  top: 10vw;
+  left: 10%;
+  width: 80%;
+  max-height: 50%;
+  background: #000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  z-index: 300;
+  padding: 2rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.chooseplaymode > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex: 1;
+}
+
+.chooseplaymode div .list {
+  height: 20vw;
+  overflow: scroll;
+}
+
+.chooseplaymode sup {
+  opacity: 0.6;
+}
+
+.roomselected {
+  background: #1a237e;
+}
+
+.startplaying {
+  font-size: 1.3em;
+  font-family: 'Amatic SC', cursive;
+
 }
 
 .chatwindow {
@@ -98,7 +140,7 @@ body {
   margin: 0;
 }
 
-.chatwindow .messages p .player {
+.chatwindow .messages p .player, .startedby {
   color: red;
 }
 .chatwindow .messages p .action {
@@ -116,19 +158,15 @@ body {
 }
 
 .entercode {
-  position: absolute;
   width: 27%;
   left: 20%;
   top: 33vw;
 }
 
 .multiplayer, .nameentry {
-  position: absolute;
-  width: 25%;
-  left: 20%;
-  top: 35vw;
   height: 7%;
   font-size: 1.5em;
+  margin-bottom: 1rem;
   font-family: 'Amatic SC', cursive;
   background-color: rgba(255, 255, 255, .9);
 }

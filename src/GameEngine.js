@@ -125,10 +125,10 @@ class GameEngine extends React.Component {
         document.addEventListener('keyup', this.keyBoard, false);
         const roomNumber = this.props.multiPlayerRoom || Math.random().toString(36).substring(7);
         this.setState({ roomNumber: roomNumber });
-        socket.emit('join', roomNumber);
+        socket.emit('join', roomNumber, this.state.playerName);
         socket.on('nextLevel received', (level) => {
             this.playSoundEffect(win);
-            this.showMessage('vann');
+            // this.showMessage('vann');
             this.setState({ playersSafe: [] });
             setTimeout(() => {
                 this.setState({ level });
@@ -215,7 +215,7 @@ class GameEngine extends React.Component {
         if (e.keyCode === 69) {
             // this.props.gotoEditor();
         } else if (e.keyCode === 74){
-            socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
+            // socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
         } else if (e.keyCode === 32){
             this.fireGun();
         } else {

@@ -29,7 +29,7 @@ function App() {
     setGameMode('editor');
   }
 
-  const updateMultiPlayerRoom = (e) => setMultiPlayerRoom(e.target.value);
+  const updateMultiPlayerRoom = (roomNumber) => setMultiPlayerRoom(roomNumber);
   
   return (
     <div className="App">
