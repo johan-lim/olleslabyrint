@@ -593,16 +593,23 @@ class GameEngine extends React.Component {
             const grid = new PF.Grid(matrix);
             const finder = new PF.AStarFinder();
             let path;
-            /*const distanceFromGubbeX = Math.abs(zombie.zombieX - this.state.gubbeX);
-            const distanceFromGubbeY = Math.abs(zombie.zombieY - this.state.gubbeY);
-            const distanceFromSlaveX = Math.abs(zombie.zombieX - this.state.slaveX);
-            const distanceFromSlaveY = Math.abs(zombie.zombieY - this.state.slaveY);
-            const slaveIsCloser = (distanceFromSlaveX + distanceFromSlaveY < distanceFromGubbeX + distanceFromGubbeY);*/
-            /*if (slaveIsCloser) {
-                path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.slaveX, this.state.slaveY, grid);
-            } else {*/
+            const slaveToZombieDistances = Object.keys(this.state.slaves).map(slave => {
+                const distanceFromSlaveX = Math.abs(zombie.zombieX - this.state.slaves[slave].slaveX);
+                const distanceFromSlaveY = Math.abs(zombie.zombieY - this.state.slaves[slave].slaveY);
+                return { slave, distance: distanceFromSlaveX + distanceFromSlaveY };
+            });
+            const masterToZombieDistance = 
+                Math.abs(zombie.zombieX - this.state.gubbeX) + Math.abs(zombie.zombieY - this.state.gubbeY);
+            const nearestSlave = slaveToZombieDistances.sort((a, b) => a.distance - b.distance)[0];
+            if (nearestSlave && nearestSlave.distance < masterToZombieDistance) {
+                path = finder.findPath(
+                    zombie.zombieX, zombie.zombieY,
+                    this.state.slaves[nearestSlave.slave].slaveX,
+                    this.state.slaves[nearestSlave.slave].slaveY,
+                    grid);
+            } else {
                 path = finder.findPath(zombie.zombieX, zombie.zombieY, this.state.gubbeX, this.state.gubbeY, grid);
-            //}
+            }
             if (path.length > 1) {
                 if (zombie.zombieX > path[1][0]) zombie.zombieDirection = 0;
                 if (zombie.zombieX < path[1][0]) zombie.zombieDirection = 2;

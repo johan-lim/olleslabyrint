@@ -16,6 +16,7 @@ import fireAudio from './assets/sounds/fire.ogg';
 import shieldUseAudio from './assets/sounds/shield_use.ogg';
 import skottAudio from './assets/sounds/skott.ogg';
 import getGunAudio from './assets/sounds/get_gun.ogg';
+import newGameAudio from './assets/sounds/game_started.ogg';
 
 export const gubbeDie = new Audio(gubbeDieAudio);
 export const peng = new Audio(pengAudio);
@@ -35,6 +36,7 @@ export const fire = new Audio(fireAudio);
 export const shieldUse = new Audio(shieldUseAudio);
 export const skott = new Audio(skottAudio);
 export const getGun = new Audio(getGunAudio);
+export const newGame = new Audio(newGameAudio);
 
 
 music.addEventListener('timeupdate', function(){

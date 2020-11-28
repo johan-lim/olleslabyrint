@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import splash from './assets/titelskärm.png';
 import playbutton from './assets/spela.png';
-import { powerup } from './Audio';
+import { newGame } from './Audio';
 
 const socket = io('https://ollesspelserver.herokuapp.com/', { transports: ['websocket'], rejectUnauthorized: false });
 // const socket = io('http://localhost:3003', { transports: ['websocket'], rejectUnauthorized: false });
@@ -14,12 +14,10 @@ export default function SplashScreen(props) {
     useEffect(() => {
         socket.emit('checkForRooms');
         socket.on('roomsAvailable', (rooms) => {
-            if (rooms.length > 0) powerup.play();
+            if (rooms.length > 0) newGame.play();
             setAvailableRooms(rooms);
         })
     }, []);
-
-    console.log(availableRooms);
     return (
         <div className="title_screen_wrapper">
             <img alt="" className="title_screen pixelated" src={splash} />
@@ -34,7 +32,7 @@ export default function SplashScreen(props) {
                 <div>
                     <h2>Pågående spel</h2>
                     <div className="list">
-                        {availableRooms.sort((a, b) => b.lastUpdated - a.lastUpdated).map(room => <div className={props.multiPlayerRoom === room.number ? 'roomselected' : ''} key={room.number} onClick={() => props.updateMultiPlayerRoom(room.number)}><input type="checkbox" checked={props.multiPlayerRoom === room.number} />Spel startat av: <span className="startedby">{room.startedBy}</span> {room.players} inne <sup>({room.number})</sup></div>)}
+                        {availableRooms.sort((a, b) => b.lastUpdated - a.lastUpdated).map(room => <div className={props.multiPlayerRoom === room.number ? 'roomselected' : 'room'} key={room.number} onClick={() => props.updateMultiPlayerRoom(room.number)}><input type="checkbox" checked={props.multiPlayerRoom === room.number} /><div className="roominfo">Spel startat av: <span className="startedby">{room.startedBy}</span> <sup>({room.number})</sup><br />{room.players} spelare inne</div></div>)}
                         {availableRooms.length === 0 && <span>(inga just nu...)</span>}
                     </div>
                 </div>
