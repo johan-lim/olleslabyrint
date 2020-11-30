@@ -16,5 +16,6 @@
     border-radius: 20%;
     text-shadow: 2px 2px #123;
     text-transform: uppercase;
-    font-size: .8em;
+    font-size: .5em;
+    font-family: 'Pixeled', cursive;
 }

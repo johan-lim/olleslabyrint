@@ -16,15 +16,17 @@
 .App header {
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: flex-start;
+    margin-top: 1rem;
 }
 
-.App header h1 {
-    margin-top: 0;
+.App header .logo img {
+    width: 70%;
 }
 
-.App header h5 {
-    margin: 3px;
+.App header h3 {
+    font-family: 'Pixeled', cursive;
+    font-size: .6em;
 }
 
 .App header .info {
@@ -34,6 +36,7 @@
     flex-direction: column;
     flex: 1;
 }
+
 
 .level {
     display: flex;

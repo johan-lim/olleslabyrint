@@ -69,7 +69,14 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  margin-right: 1rem;
   flex: 1;
+}
+
+.chooseplaymode h2 {
+  font-family: 'Pixeled', cursive;
+  font-size: .8em;
+  text-transform: uppercase;
 }
 
 .chooseplaymode div .list {
@@ -97,9 +104,8 @@ body {
 }
 
 .startplaying {
-  font-size: 1.3em;
-  font-family: 'Amatic SC', cursive;
-
+  font-size: 1em;
+  font-family: 'Free Pixel', cursive;
 }
 
 .chatwindow {
@@ -136,6 +142,9 @@ body {
 
 .chatwindow h3, .playersonline h3 {
   background: #1a237e;
+  font-family: 'Pixeled', cursive;
+  font-size: .6em;
+  margin-bottom: 1rem;
   width: 100%;
 }
 
@@ -161,24 +170,18 @@ body {
 
 .chatwindow .chatinput {
   width: 98%;
-  font-family: 'Amatic SC', cursive;
-  font-size: 1.3em;
+  font-family: 'Free Pixel', cursive;
+  font-size: 1em;
   background-color: transparent;
   border: 1px solid #1a237e;
   color: white;
 }
 
-.entercode {
-  width: 27%;
-  left: 20%;
-  top: 33vw;
-}
-
 .multiplayer, .nameentry {
   height: 7%;
-  font-size: 1.5em;
+  font-size: 1.1em;
   margin-bottom: 1rem;
-  font-family: 'Amatic SC', cursive;
+  font-family: 'Free Pixel', cursive;
   background-color: rgba(255, 255, 255, .9);
 }
 
@@ -195,7 +198,7 @@ body {
   top: 27vw;
 }
 
-.playbutton:hover, .entercode:hover {
+.playbutton:hover {
   opacity: .6;
   transform: scale(1.1);
 }

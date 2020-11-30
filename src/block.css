@@ -4,9 +4,12 @@
     width: 4%;
 }
 
+header span {
+    white-space: nowrap;
+}
+
 header span .key {
-    width: 20px;
-    height: 10px;
+    width: 20%;
     margin: 0;
 }
 

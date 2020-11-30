@@ -2,6 +2,7 @@ import React from 'react';
 import PF from 'pathfinding';
 import io from 'socket.io-client';
 import './GameEngine.css';
+import logo from './assets/small_logo.png';
 import Gubbe from './Gubbe';
 import Zombie from './Zombie';
 import Slave from './Slave';
@@ -714,10 +715,14 @@ class GameEngine extends React.Component {
         for (let y = 0; y < 7; y++) {
             for (let x = 0; x < 7; x++) {
                 let currentBlock = 0;
-                if ((y - 3 + this.state.gubbeY) > -1 && (x - 3 + this.state.gubbeX) > -1 && (y - 3 + this.state.gubbeY) < this.state.currentLevel.length && (x - 3 + this.state.gubbeX) < this.state.currentLevel[0].length) {
+                if (
+                    (y - 3 + this.state.gubbeY) > -1 &&
+                    (x - 3 + this.state.gubbeX) > -1 &&
+                    (y - 3 + this.state.gubbeY) < this.state.currentLevel.length &&
+                    (x - 3 + this.state.gubbeX) < this.state.currentLevel[0].length) {
                     currentBlock = this.state.currentLevel[y - 3 + this.state.gubbeY][x - 3 + this.state.gubbeX];
                 }
-                viewPort[y][x] = currentBlock; 
+                viewPort[y][x] = currentBlock;
             }
         }
         const level = viewPort.map((line, y) => line.map((block, x) =>
@@ -742,8 +747,8 @@ class GameEngine extends React.Component {
                 skottY={b.bulletY} />
         )
         const gunBullets = this.state.gunBullets.map((b, i) =>
-        <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
-    )
+            <Skott key={i} gubbeX={this.state.gubbeX} gubbeY={this.state.gubbeY} skottX={b.bulletX} skottY={b.bulletY} />
+        )
         const zombies = this.state.zombies.map((z, i) => 
             <Zombie
                 key={i}
@@ -757,9 +762,8 @@ class GameEngine extends React.Component {
         return (
             <div className="App">
                 <header>
-                    <div className="logo">
-                        <h1>Labyrinten</h1>
-                        <h3>av Olle Kanarp</h3>
+                    <div className="logo pixelated">
+                        <img alt="labyrinten" src={logo} />
                     </div>
                     <InfoBox
                         shieldHealth={this.state.shield}
