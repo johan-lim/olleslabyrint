@@ -123,7 +123,7 @@ class GameEngine extends React.Component {
     }
 
     componentDidMount() {
-        document.addEventListener('keyup', this.keyBoard, false);
+        document.addEventListener('keydown', this.keyBoard, false);
         const roomNumber = this.props.multiPlayerRoom || Math.random().toString(36).substring(7);
         this.setState({ roomNumber: roomNumber });
         socket.emit('join', roomNumber, this.state.playerName);
