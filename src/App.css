@@ -94,11 +94,6 @@ body {
   justify-content: space-around;
 }
 
-.roominfo {
-  text-align: left;
-  width: 80%;
-}
-
 .roomselected {
   background: #1a237e;
 }
@@ -158,6 +153,7 @@ body {
 }
 .chatwindow .messages p {
   margin: 0;
+  font-size: .8em;
 }
 
 .chatwindow .messages p .player, .startedby {

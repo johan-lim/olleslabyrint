@@ -20,13 +20,17 @@
     margin-top: 1rem;
 }
 
+.App header .logo {
+    margin-top: 1rem;
+}
+
 .App header .logo img {
     width: 70%;
 }
 
 .App header h3 {
     font-family: 'Pixeled', cursive;
-    font-size: .6em;
+    font-size: .8em;
 }
 
 .App header .info {
@@ -35,6 +39,13 @@
     justify-content: flex-start;
     flex-direction: column;
     flex: 1;
+    font-size: .9em;
+}
+
+.App header .info img {
+    vertical-align: top;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 
 

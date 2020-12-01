@@ -25,7 +25,7 @@ export default function SplashScreen(props) {
             <div className="chooseplaymode">
                 <div>
                     <h2>Starta spelet</h2>
-                    <p>Välj ett pågående multiplayer till höger, eller skriv in ditt namn och bara tryck på spela för att starta ett eget spel</p>
+                    <p>Välj ett pågående spel till höger, eller skriv in ditt namn för att starta ett nytt spel.</p>
                     <input placeholder="Skriv ditt namn" className="nameentry" type="text" onChange={(e) => props.setPlayerName(e.target.value)} value={props.playerName} />
                     <button disabled={!props.playerName} className="startplaying" onClick={props.playGame}>Börja spela</button>
                 </div>

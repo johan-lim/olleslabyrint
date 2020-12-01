@@ -26,7 +26,7 @@ function InfoBox(props) {
             <span>Poäng: {props.points}</span>
             <span>Nivå: {props.level + 1}</span>
             <span>Liv: {props.lives}</span>
-            <span>Ryggsäck: {props.inventory.map(item => inventory[item])}</span>
+            <span>Ryggsäck: {props.inventory.length ? props.inventory.map(item => inventory[item]): '(tom)'}</span>
         </div> 
     </> 
     );
