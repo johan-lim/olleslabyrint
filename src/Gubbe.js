@@ -24,7 +24,8 @@ function Gubbe(props) {
     }
 
     const gubbeClasses = classnames({
-        hasShield: props.hasShield
+        hasShield: props.hasShield,
+        isHurt: props.isHurt
     });
 
     return (

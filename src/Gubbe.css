@@ -5,16 +5,23 @@
     margin-top: 2%;
     box-sizing: border-box;
 }
+
+.isHurt {
+    opacity: .7;
+}
+
 .gubbe img {
     width: 100%;
 }
 
 .hasShield {
-    border: 5px dashed brown;
+    border-top: 7px solid #9e7162;
+    border-radius: 1rem;
 }
 
 .nametag {
     position: absolute;
+    white-space: nowrap;
     line-height: 1;
     margin-top: -30px;
     padding: .1rem .5rem;
