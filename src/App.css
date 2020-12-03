@@ -91,7 +91,11 @@ body {
 .chooseplaymode .room, .chooseplaymode .roomselected {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-end;
+}
+
+.chooseplaymode .room, .chooseplaymode .checkbox {
+  margin-right: 2rem;
 }
 
 .roomselected {
@@ -173,25 +177,13 @@ body {
   color: white;
 }
 
-.multiplayer, .nameentry {
+.nameentry {
+  top: 27vw;
   height: 7%;
   font-size: 1.1em;
   margin-bottom: 1rem;
   font-family: 'Free Pixel', cursive;
   background-color: rgba(255, 255, 255, .9);
-}
-
-.code {
-  font-family: monospace;
-  font-size: 1.5em;
-  background-color: transparent;
-  border: 1px solid white;
-  color: white;
-  width: 10rem;
-}
-
-.nameentry {
-  top: 27vw;
 }
 
 .playbutton:hover {
@@ -213,15 +205,27 @@ body {
   .controls_info {
     display: none;
   }
+  .chooseplaymode {
+    display: flex;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+  }
   .chatwindow {
     left: 2%;
-    top: 45vh;
+    top: 54vh;
     border: 1px solid #666;
     border-radius: .5rem;
+  }
+  .chatwindow .chatinput {
+    font-size: .7em;
   }
   .playersonline {
     left: 2%;
     top: 26vh;
+    max-height: 26vh;
     border: 1px solid #666;
     border-radius: .5rem;
   }

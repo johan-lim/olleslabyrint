@@ -320,7 +320,25 @@ class GameEngine extends React.Component {
     }
 
     sendChatMessage = (message) => {
-        socket.emit('chatMessage', this.state.roomNumber, {player: this.state.playerName, message});
+        if (message.startsWith('/')) {
+            this.runChatCommand(message);
+        } else {
+            socket.emit('chatMessage', this.state.roomNumber, {player: this.state.playerName, message});
+        }
+    }
+
+    runChatCommand = (command) => {
+        console.log('command:', command);
+        switch (command) {
+            case '/editor':
+                this.props.gotoEditor();
+                break;
+            case '/nextlevel':
+                socket.emit('nextLevel', this.state.roomNumber, this.state.level + 1);
+                break;
+            default:
+                break;
+        }
     }
 
     findPortalAndTeleport = (direction) => {

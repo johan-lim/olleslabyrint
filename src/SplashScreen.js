@@ -17,6 +17,9 @@ export default function SplashScreen(props) {
             if (rooms.length > 0) newGame.play();
             setAvailableRooms(rooms);
         })
+        return () => {
+            socket.disconnect();
+        };
     }, []);
     return (
         <div className="title_screen_wrapper">
@@ -32,7 +35,17 @@ export default function SplashScreen(props) {
                 <div>
                     <h2>Pågående spel</h2>
                     <div className="list">
-                        {availableRooms.sort((a, b) => b.lastUpdated - a.lastUpdated).map(room => <div className={props.multiPlayerRoom === room.number ? 'roomselected' : 'room'} key={room.number} onClick={() => props.updateMultiPlayerRoom(room.number)}><input type="checkbox" checked={props.multiPlayerRoom === room.number} /><div className="roominfo">Spel startat av: <span className="startedby">{room.startedBy}</span> <sup>({room.number})</sup><br />{room.players} spelare inne</div></div>)}
+                        {availableRooms.sort((a, b) => b.lastUpdated - a.lastUpdated).map(
+                            room => 
+                                <div
+                                    className={props.multiPlayerRoom === room.number ? 'roomselected' : 'room'}
+                                    key={room.number}
+                                    onClick={() => props.updateMultiPlayerRoom(room.number)}>
+                                    <input type="checkbox" className="checkbox" checked={props.multiPlayerRoom === room.number} />
+                                    <div className="roominfo">
+                                        Spel startat av: <span className="startedby">{room.startedBy}</span> <sup>({room.number})</sup><br />{room.players} spelare inne
+                                    </div>
+                                </div>)}
                         {availableRooms.length === 0 && <span>(inga just nu...)</span>}
                     </div>
                 </div>

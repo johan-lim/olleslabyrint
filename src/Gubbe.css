@@ -1,7 +1,12 @@
 .gubbe {
     position: absolute;
+    display: flex;
+    justify-content: center;
     margin-top: 2%;
     box-sizing: border-box;
+}
+.gubbe img {
+    width: 100%;
 }
 
 .hasShield {
@@ -10,12 +15,13 @@
 
 .nametag {
     position: absolute;
-    width: 7%;
-    height: 5%;
+    line-height: 1;
+    margin-top: -30px;
+    padding: .1rem .5rem;
     color: #fff;
-    border-radius: 20%;
     text-shadow: 2px 2px #123;
     text-transform: uppercase;
     font-size: .5em;
     font-family: 'Pixeled', cursive;
+    z-index: 3000;
 }
