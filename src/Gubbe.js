@@ -2,6 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import gubbeImage from './assets/gubbe.png';
 import gubbeFacklaImage from './assets/gubbe-fackla.png';
+import gubbeGunImage from './assets/gubbe-gun.png';
+
 import './Gubbe.css';
 
 function Gubbe(props) {
@@ -28,6 +30,13 @@ function Gubbe(props) {
         isHurt: props.isHurt
     });
 
+    let image = gubbeImage;
+    if (props.hasFackla) {
+        image = gubbeFacklaImage;
+    } else if (props.hasGun) {
+        image = gubbeGunImage;
+    }
+
     return (
         <div
             className="gubbe pixelated"
@@ -36,7 +45,7 @@ function Gubbe(props) {
                 :
                 { position: 'initial', width: '50px', height: '50px'}}>
             <div className="nametag">{props.playerName}</div>
-            <img alt="" className={gubbeClasses} style={{ transform: `rotate(${degreesOfRotation}deg)` }} src={props.hasFackla ? gubbeFacklaImage : gubbeImage} />
+            <img alt="" className={gubbeClasses} style={{ transform: `rotate(${degreesOfRotation}deg)` }} src={image} />
         </div>
     );
 }

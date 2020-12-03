@@ -826,6 +826,7 @@ class GameEngine extends React.Component {
                         gubbeDirection={this.state.gubbeDirection}
                         playerName={this.state.playerName}
                         hasFackla={this.state.inventory.includes('fackla')}
+                        hasGun={this.state.inventory.includes('gun')}
                         shieldHealth={this.state.shieldHealth}
                         hasShield={this.state.inventory.includes('shield')} />
                     {zombies}
