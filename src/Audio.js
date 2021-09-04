@@ -38,11 +38,10 @@ export const skott = new Audio(skottAudio);
 export const getGun = new Audio(getGunAudio);
 export const newGame = new Audio(newGameAudio);
 
-
-music.addEventListener('timeupdate', function(){
-    var buffer = .20
-    if(this.currentTime > this.duration - buffer){
-        this.currentTime = 0
-        this.play()
-    }
+music.addEventListener('timeupdate', function () {
+  var buffer = 0.2;
+  if (this.currentTime > this.duration - buffer) {
+    this.currentTime = 0;
+    this.play();
+  }
 });

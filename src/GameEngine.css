@@ -1,66 +1,65 @@
 .pixelated {
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -o-crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-    -ms-interpolation-mode: nearest-neighbor;
-    image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: pixelated;
 }
 
 .info_message {
-    position: fixed;
-    left: 35vw;
-    top: 44vh;
-    width: 250px;
+  position: fixed;
+  left: 35vw;
+  top: 44vh;
+  width: 250px;
 }
 
 .App header {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: 1rem;
 }
 
 .App header .logo {
-    margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .App header .logo img {
-    width: 70%;
+  width: 70%;
 }
 
 .App header h3 {
-    font-family: 'Pixeled', cursive;
-    font-size: .8em;
+  font-family: 'Pixeled', cursive;
+  font-size: 0.8em;
 }
 
 .App header .info {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-direction: column;
-    flex: 1;
-    font-size: .9em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex: 1;
+  font-size: 0.9em;
 }
 
 .App header .info img {
-    vertical-align: top;
-    margin-top: 5px;
-    margin-right: 5px;
+  vertical-align: top;
+  margin-top: 5px;
+  margin-right: 5px;
 }
 
-
 .level {
-    display: flex;
-    position: absolute;
-    width: 80vw;
-    margin-left: 20vw;
-    height: 90%;
-    left: 0;
+  display: flex;
+  position: absolute;
+  width: 80vw;
+  margin-left: 20vw;
+  height: 90%;
+  left: 0;
 }
 
 @media only screen and (min-width: 900px) {
-    .level {
-        width: 80vw;
-        margin-left: 28vw;    
-    }
+  .level {
+    width: 80vw;
+    margin-left: 28vw;
+  }
 }

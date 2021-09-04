@@ -1,21 +1,21 @@
 .keys {
-    position: fixed;
-    bottom: 20px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
 }
 .keys .button {
-    width: 42px;
-    height: 42px;
+  width: 42px;
+  height: 42px;
 }
 .keys .button.left {
-    transform: rotate(270deg);
+  transform: rotate(270deg);
 }
 .keys .button.right {
-    transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 .keys .button.down {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }

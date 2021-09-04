@@ -6,9 +6,8 @@ import EndScreen from './EndScreen';
 import { play } from './Audio';
 import './App.css';
 
-
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.prompt();
+  e.prompt();
 });
 
 function App() {
@@ -19,37 +18,39 @@ function App() {
   const playGame = () => {
     play.play();
     setGameMode('game');
-  }
+  };
 
   const finishGame = () => {
     setGameMode('end');
-  }
+  };
 
   const gotoEditor = () => {
     setGameMode('editor');
-  }
+  };
 
   const updateMultiPlayerRoom = (roomNumber) => setMultiPlayerRoom(roomNumber);
-  
+
   return (
     <div className="App">
-        {gameMode === 'splash' &&
-          <SplashScreen
-            playGame={playGame}
-            updateMultiPlayerRoom={updateMultiPlayerRoom}
-            multiPlayerRoom={multiPlayerRoom}
-            playerName={playerName}
-            setPlayerName={setPlayerName}
-          />}
-        {gameMode === 'game' &&
-          <GameEngine
-            gotoEditor={gotoEditor}
-            finishGame={finishGame}
-            multiPlayerRoom={multiPlayerRoom}
-            playerName={playerName}
-          />}
-        {gameMode === 'editor' && <LevelEditor playGame={playGame} />}
-        {gameMode === 'end' && <EndScreen />}
+      {gameMode === 'splash' && (
+        <SplashScreen
+          playGame={playGame}
+          updateMultiPlayerRoom={updateMultiPlayerRoom}
+          multiPlayerRoom={multiPlayerRoom}
+          playerName={playerName}
+          setPlayerName={setPlayerName}
+        />
+      )}
+      {gameMode === 'game' && (
+        <GameEngine
+          gotoEditor={gotoEditor}
+          finishGame={finishGame}
+          multiPlayerRoom={multiPlayerRoom}
+          playerName={playerName}
+        />
+      )}
+      {gameMode === 'editor' && <LevelEditor playGame={playGame} />}
+      {gameMode === 'end' && <EndScreen />}
     </div>
   );
 }

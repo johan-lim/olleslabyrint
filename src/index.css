@@ -8,17 +8,15 @@ body {
 @font-face {
   font-family: 'Free Pixel';
   src: url('FreePixel-Regular.woff2') format('woff2'),
-      url('FreePixel-Regular.woff') format('woff');
+    url('FreePixel-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-
 @font-face {
   font-family: 'Pixeled';
-  src: url('Pixeled.woff2') format('woff2'),
-      url('Pixeled.woff') format('woff');
+  src: url('Pixeled.woff2') format('woff2'), url('Pixeled.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
