@@ -195,11 +195,7 @@ body {
   transform: scale(1.1);
 }
 
-.App {
-  text-align: center;
-  height: 90vh;
-  font-size: calc(7px + 2vmin);
-}
+.App { min-height: 100%; }
 
 .logo {
   flex: 1;
