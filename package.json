@@ -2,6 +2,7 @@
   "name": "olles-spel",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://johan-lim.github.io/olleslabyrint",
   "dependencies": {
     "classnames": "^2.2.6",
     "pathfinding": "^0.4.18",

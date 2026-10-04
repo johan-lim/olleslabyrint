@@ -132,6 +132,17 @@ function findTiles(map, tileType) {
   return matches;
 }
 
+function revealAround(map, player, explored = new Set()) {
+  const centerX = Math.floor(player.x);
+  const centerY = Math.floor(player.y);
+  for (let y = centerY - 1; y <= centerY + 1; y += 1) {
+    for (let x = centerX - 1; x <= centerX + 1; x += 1) {
+      if (map[y] && map[y][x] !== undefined) explored.add(`${x}-${y}`);
+    }
+  }
+  return explored;
+}
+
 function createCannonballs(map) {
   return findTiles(map, 18).map((cannon) => ({
     id: `shot-${cannon.id}`,
@@ -309,24 +320,46 @@ function traceGunShot(map, player, targets = [], isPassable = () => true) {
 function MiniMap({
   map, player, doorOpen, collectedKeys, collectedCoins, collectedHearts,
   collectedTorches, collectedGuns, collectedShields, collectedPickaxes,
-  zombies, lasersActive, activeBombId,
+  zombies, exploredTiles, lasersActive, activeBombId,
 }) {
   const width = map[0].length;
   const height = map.length;
   const playerRotation = (player.angle * 180) / Math.PI + 90;
+  const previewTiles = new Set();
+  const playerTileX = Math.floor(player.x);
+  const playerTileY = Math.floor(player.y);
+  for (let y = playerTileY - 2; y <= playerTileY + 2; y += 1) {
+    for (let x = playerTileX - 2; x <= playerTileX + 2; x += 1) {
+      const id = `${x}-${y}`;
+      if (map[y] && map[y][x] !== undefined && !exploredTiles.has(id)) previewTiles.add(id);
+    }
+  }
   return (
-    <aside className="minimap" aria-label="Map showing walls and player position">
-      <p>MAP</p>
+    <aside className="minimap" aria-label="Karta med väggar och spelarens position">
+      <p>KARTA</p>
       <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height}
-        role="img" aria-label="Current level map">
+        role="img" aria-label="Karta över aktuell nivå">
         <rect width={width} height={height} className="minimap-background" />
+        {Array.from(exploredTiles).map((id) => {
+          const [x, y] = id.split('-').map(Number);
+          return <rect key={`explored-${id}`} x={x} y={y} width="1" height="1"
+            className="minimap-explored" />;
+        })}
+        {Array.from(previewTiles).map((id) => {
+          const [x, y] = id.split('-').map(Number);
+          return SOLID_TILES.has(map[y][x])
+            ? <rect key={`preview-${id}`} x={x} y={y} width="1" height="1"
+              className="minimap-wall-preview" />
+            : null;
+        })}
         {map.map((row, y) => row.map((tile, x) => (
-          SOLID_TILES.has(tile)
+          exploredTiles.has(`${x}-${y}`) && SOLID_TILES.has(tile)
             ? <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1"
-              className={tile === 3 && doorOpen ? 'minimap-door-open' : 'minimap-wall'} />
+              className={`${tile === 3 && doorOpen ? 'minimap-door-open' : 'minimap-wall'} minimap-revealed`} />
             : null
         )))}
         {map.map((row, y) => row.map((tile, x) => {
+          if (!exploredTiles.has(`${x}-${y}`)) return null;
           if (tile === 2 && collectedKeys.has(`${x}-${y}`)) return null;
           if (tile === 11 && collectedCoins.has(`${x}-${y}`)) return null;
           if (tile === 12 && collectedHearts.has(`${x}-${y}`)) return null;
@@ -346,7 +379,7 @@ function MiniMap({
                 <image key={angle} href={laserImage} x={x + 0.08} y={y + 0.08}
                   width="0.84" height="0.84" preserveAspectRatio="xMidYMid meet"
                   transform={angle ? `rotate(${angle} ${x + 0.5} ${y + 0.5})` : undefined}
-                  className="minimap-sprite" />
+                  className="minimap-sprite minimap-revealed" />
               ))}
             </g>;
           }
@@ -354,9 +387,11 @@ function MiniMap({
           if (!source) return null;
           return <image key={`item-${x}-${y}`} href={source} x={x + 0.08} y={y + 0.08}
             width="0.84" height="0.84" preserveAspectRatio="xMidYMid meet"
-            className={`minimap-sprite ${tile === 17 && activeBombId === `${x}-${y}` ? 'bomb-active' : ''}`} />;
+            className={`minimap-sprite minimap-revealed ${tile === 17 && activeBombId === `${x}-${y}` ? 'bomb-active' : ''}`} />;
         }))}
-        {zombies.map((zombie) => (
+        {zombies.filter((zombie) => exploredTiles.has(
+          `${Math.floor(zombie.x)}-${Math.floor(zombie.y)}`
+        )).map((zombie) => (
           <image key={`zombie-${zombie.id}`} href={zombieImage}
             x={zombie.x - 0.42} y={zombie.y - 0.42} width="0.84" height="0.84"
             preserveAspectRatio="xMidYMid meet" className="minimap-sprite" />
@@ -372,27 +407,27 @@ function MiniMap({
 
 function Inventory({ keyCount, torchRemaining, hasGun, shieldHealth, pickaxeHealth }) {
   return (
-    <aside className="inventory" aria-label={`Inventory with ${keyCount} keys`}>
-      <p>INVENTORY</p>
+    <aside className="inventory" aria-label={`Ryggsäck med ${keyCount} nycklar`}>
+      <p>RYGGSÄCK</p>
       <div className={`inventory-slot ${keyCount === 0 ? 'empty' : ''}`}>
-        {keyCount > 0 && <img src={keyImage} alt="Key" />}
+        {keyCount > 0 && <img src={keyImage} alt="Nyckel" />}
         <span>{keyCount}</span>
       </div>
       <div className={`inventory-slot torch-slot ${torchRemaining === 0 ? 'empty' : 'torch-active'}`}>
-        {torchRemaining > 0 && <img src={torchImage} alt="Torch" />}
+        {torchRemaining > 0 && <img src={torchImage} alt="Fackla" />}
         <span>{torchRemaining > 0 ? `${Math.ceil(torchRemaining)}s` : '0'}</span>
       </div>
       <div className={`inventory-slot ${hasGun ? '' : 'empty'}`}>
-        {hasGun && <img src={gunImage} alt="Gun" />}
-        <span>{hasGun ? 'READY' : '0'}</span>
+        {hasGun && <img src={gunImage} alt="Pistol" />}
+        <span>{hasGun ? 'REDO' : '0'}</span>
       </div>
       <div className={`inventory-slot ${shieldHealth > 0 ? 'shield-active' : 'empty'}`}>
-        {shieldHealth > 0 && <img src={shieldImage} alt="Shield"
+        {shieldHealth > 0 && <img src={shieldImage} alt="Sköld"
           style={{ opacity: 0.35 + shieldHealth * 0.65 }} />}
         <span>{shieldHealth > 0 ? `${Math.round(shieldHealth * 100)}%` : '0'}</span>
       </div>
       <div className={`inventory-slot ${pickaxeHealth > 0 ? 'pickaxe-active' : 'empty'}`}>
-        {pickaxeHealth > 0 && <img src={pickaxeImage} alt="Pickaxe"
+        {pickaxeHealth > 0 && <img src={pickaxeImage} alt="Hacka"
           style={{ opacity: 0.35 + pickaxeHealth * 0.65 }} />}
         <span>{pickaxeHealth > 0 ? Math.ceil(pickaxeHealth * 4) : '0'}</span>
       </div>
@@ -404,6 +439,7 @@ function RaycastGame() {
   const initialMap = levels[0].blocks;
   const canvasRef = useRef(null);
   const playerRef = useRef(findStart(initialMap));
+  const exploredTilesRef = useRef(revealAround(initialMap, playerRef.current));
   const keysRef = useRef(new Set());
   const levelSkipRequestedRef = useRef(false);
   const levelSkipHeldRef = useRef(false);
@@ -456,6 +492,7 @@ function RaycastGame() {
   const pickaxeHealthRef = useRef(0);
   const lastLockedSoundRef = useRef(0);
   const gameStatusRef = useRef('playing');
+  const seenLevelMessagesRef = useRef(new Set());
   const [position, setPosition] = useState(playerRef.current);
   const [currentMap, setCurrentMap] = useState(initialMap);
   const [levelIndex, setLevelIndex] = useState(0);
@@ -471,6 +508,19 @@ function RaycastGame() {
   const [shieldHealth, setShieldHealth] = useState(0);
   const [pickaxeHealth, setPickaxeHealth] = useState(0);
   const [gameStatus, setGameStatus] = useState('playing');
+  const [levelCallout, setLevelCallout] = useState(null);
+
+  useEffect(() => {
+    setLevelCallout(null);
+    const message = levels[levelIndex] && levels[levelIndex].message;
+    if (!message || !message.trim() || seenLevelMessagesRef.current.has(levelIndex)) {
+      return undefined;
+    }
+    seenLevelMessagesRef.current.add(levelIndex);
+    setLevelCallout({ level: levelIndex, message: message.trim() });
+    const timer = window.setTimeout(() => setLevelCallout(null), 4500);
+    return () => window.clearTimeout(timer);
+  }, [levelIndex]);
 
   useEffect(() => {
     Object.keys(textureSources).forEach((tile) => {
@@ -609,6 +659,7 @@ function RaycastGame() {
       levelIndexRef.current = 0;
       mapRef.current = firstMap;
       playerRef.current = firstPlayer;
+      exploredTilesRef.current = revealAround(firstMap, firstPlayer);
       keyItemsRef.current = findTiles(firstMap, 2);
       coinItemsRef.current = findTiles(firstMap, 11);
       heartItemsRef.current = findTiles(firstMap, 12);
@@ -683,6 +734,7 @@ function RaycastGame() {
       levelIndexRef.current = nextLevel;
       mapRef.current = nextMap;
       playerRef.current = nextPlayer;
+      exploredTilesRef.current = revealAround(nextMap, nextPlayer);
       keyItemsRef.current = findTiles(nextMap, 2);
       coinItemsRef.current = findTiles(nextMap, 11);
       heartItemsRef.current = findTiles(nextMap, 12);
@@ -1027,6 +1079,8 @@ function RaycastGame() {
       } else if (!activePortal) {
         portalLockedRef.current = false;
       }
+
+      revealAround(map, player, exploredTilesRef.current);
 
       keyItemsRef.current.forEach((item) => {
         if (!collectedKeysRef.current.has(item.id) && Math.hypot(item.x - player.x, item.y - player.y) < 0.55) {
@@ -1414,18 +1468,21 @@ function RaycastGame() {
         <div><p className="eyebrow">OLLES LABYRINT</p><h1>LEVEL {String(levelIndex + 1).padStart(2, '0')}</h1></div>
         <div className="status-readout">
           {hasLaserSystem && <p className={lasersActive ? 'lasers-active' : 'lasers-off'}>
-            LASERS {lasersActive ? 'ACTIVE' : 'OFF'}
+            LASER {lasersActive ? 'AKTIV' : 'AV'}
           </p>}
           {bombCountdown > 0 && <p className="bomb-countdown">BOMB {bombCountdown.toFixed(1)}s</p>}
-          <p className="score">POINTS {points}</p>
-          <p className="lives">LIVES {lives}</p>
+          <p className="score">POÄNG {points}</p>
+          <p className="lives">LIV {lives}</p>
           <p className="coordinates">X {position.x.toFixed(1)} · Y {position.y.toFixed(1)}</p>
         </div>
       </header>
-      <section className="viewport-frame" aria-label="First-person maze view">
+      <section className="viewport-frame" aria-label="Labyrint i förstapersonsvy">
         <canvas ref={canvasRef} className="game-canvas" />
         <div className="scanlines" aria-hidden="true" />
-        <p className="range">VIEW RANGE {torchRemaining > 0 ? TORCH_VIEW_DISTANCE : BASE_VIEW_DISTANCE} BLOCKS</p>
+        <p className="range">SYNRÄCKVIDD {torchRemaining > 0 ? TORCH_VIEW_DISTANCE : BASE_VIEW_DISTANCE} RUTOR</p>
+        {levelCallout && gameStatus === 'playing' && (
+          <p key={levelCallout.level} className="level-callout">{levelCallout.message}</p>
+        )}
         <div className="hud-panels">
           <Inventory keyCount={keyCount} torchRemaining={torchRemaining} hasGun={hasGun}
             shieldHealth={shieldHealth} pickaxeHealth={pickaxeHealth} />
@@ -1436,26 +1493,27 @@ function RaycastGame() {
             collectedShields={collectedShieldsRef.current}
             collectedPickaxes={collectedPickaxesRef.current}
             zombies={zombieItemsRef.current}
+            exploredTiles={exploredTilesRef.current}
             lasersActive={lasersActive} activeBombId={activeBombId} />
         </div>
         {gameStatus !== 'playing' && (
           <div className={`game-state-overlay ${gameStatus}`} role="dialog"
-            aria-label={gameStatus === 'gameover' ? 'Game over' : 'Game complete'}>
+            aria-label={gameStatus === 'gameover' ? 'Spelet är slut' : 'Spelet är avklarat'}>
             <img src={gameStatus === 'gameover' ? gameOverImage : successImage}
-              alt={gameStatus === 'gameover' ? 'Game over' : 'Game complete'} />
-            <p>POINTS {points}</p>
+              alt={gameStatus === 'gameover' ? 'Spelet är slut' : 'Spelet är avklarat'} />
+            <p>POÄNG {points}</p>
             <button type="button" onClick={() => { restartRequestedRef.current = true; }}>
-              PLAY AGAIN
+              SPELA IGEN
             </button>
           </div>
         )}
       </section>
       <footer className="game-footer">
-          <p>W/S OR ↑/↓ MOVE <span>A/D OR ←/→ TURN</span><span>SPACE FIRE</span><span>SHIFT+TAB NEXT LEVEL</span></p>
-        <div className="touch-controls" aria-label="Touch controls">
+          <p>W/S ELLER ↑/↓ GÅ <span>A/D ELLER ←/→ SVÄNG</span><span>MELLANSLAG SKJUT</span><span>SHIFT+TAB NÄSTA NIVÅ</span></p>
+        <div className="touch-controls" aria-label="Pekkontroller">
           {[
-            ['arrowleft', 'TURN LEFT'], ['arrowup', 'FORWARD'],
-            ['arrowdown', 'BACK'], ['arrowright', 'TURN RIGHT'],
+            ['arrowleft', 'SVÄNG VÄNSTER'], ['arrowup', 'FRAMÅT'],
+            ['arrowdown', 'BAKÅT'], ['arrowright', 'SVÄNG HÖGER'],
           ].map(([key, label]) => (
             <button key={key} type="button"
               onPointerDown={(event) => { event.preventDefault(); setControl(key, true); }}
@@ -1466,7 +1524,7 @@ function RaycastGame() {
           {hasGun && <button type="button" onPointerDown={(event) => {
             event.preventDefault();
             fireRequestedRef.current = true;
-          }}>FIRE</button>}
+          }}>SKJUT</button>}
         </div>
       </footer>
     </main>
