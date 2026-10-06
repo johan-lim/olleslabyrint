@@ -33,6 +33,7 @@ import {
   bomb as bombSound,
   explosion,
   endMusic,
+  music,
   gubbeDie,
   fire,
   getGun as getGunSound,
@@ -91,6 +92,11 @@ const MINIMAP_SPRITES = {
   25: rock,
   26: sand,
 };
+const SOUND_EFFECTS = [
+  bombSound, explosion, gubbeDie, fire, getGunSound, keySound,
+  laserSound, newGame, noKey, peng, portalSound, powerupSound,
+  shieldSound, shieldUse, cannonSound, win,
+];
 
 function playSound(sound, volume = 1) {
   sound.volume = Math.max(0, Math.min(1, volume));
@@ -492,6 +498,8 @@ function RaycastGame() {
   const pickaxeHealthRef = useRef(0);
   const lastLockedSoundRef = useRef(0);
   const gameStatusRef = useRef('playing');
+  const musicEnabledRef = useRef(false);
+  const soundEffectsEnabledRef = useRef(true);
   const seenLevelMessagesRef = useRef(new Set());
   const [position, setPosition] = useState(playerRef.current);
   const [currentMap, setCurrentMap] = useState(initialMap);
@@ -509,6 +517,34 @@ function RaycastGame() {
   const [pickaxeHealth, setPickaxeHealth] = useState(0);
   const [gameStatus, setGameStatus] = useState('playing');
   const [levelCallout, setLevelCallout] = useState(null);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
+
+  const toggleMusic = () => {
+    const enabled = !musicEnabledRef.current;
+    musicEnabledRef.current = enabled;
+    setMusicEnabled(enabled);
+
+    if (!enabled) {
+      music.pause();
+      endMusic.pause();
+      return;
+    }
+
+    if (gameStatusRef.current === 'complete') {
+      playSound(endMusic);
+    } else if (gameStatusRef.current === 'playing') {
+      const playback = music.play();
+      if (playback && playback.catch) playback.catch(() => {});
+    }
+  };
+
+  const toggleSoundEffects = () => {
+    const enabled = !soundEffectsEnabledRef.current;
+    soundEffectsEnabledRef.current = enabled;
+    SOUND_EFFECTS.forEach((sound) => { sound.muted = !enabled; });
+    setSoundEffectsEnabled(enabled);
+  };
 
   useEffect(() => {
     setLevelCallout(null);
@@ -633,6 +669,7 @@ function RaycastGame() {
       keysRef.current.clear();
       playSound(gubbeDie);
       if (livesRef.current === 0) {
+        music.pause();
         gameStatusRef.current = 'gameover';
         setGameStatus('gameover');
         return false;
@@ -649,10 +686,18 @@ function RaycastGame() {
       gameStatusRef.current = 'complete';
       keysRef.current.clear();
       setGameStatus('complete');
-      playSound(endMusic);
+      music.pause();
+      if (musicEnabledRef.current) playSound(endMusic);
     };
 
     const resetGame = () => {
+      endMusic.pause();
+      endMusic.currentTime = 0;
+      if (musicEnabledRef.current) {
+        music.currentTime = 0;
+        const playback = music.play();
+        if (playback && playback.catch) playback.catch(() => {});
+      }
       const firstMap = levels[0].blocks;
       const firstPlayer = findStart(firstMap);
       const firstLasers = findTiles(firstMap, 15);
@@ -1478,7 +1523,6 @@ function RaycastGame() {
       </header>
       <section className="viewport-frame" aria-label="Labyrint i förstapersonsvy">
         <canvas ref={canvasRef} className="game-canvas" />
-        <div className="scanlines" aria-hidden="true" />
         <p className="range">SYNRÄCKVIDD {torchRemaining > 0 ? TORCH_VIEW_DISTANCE : BASE_VIEW_DISTANCE} RUTOR</p>
         {levelCallout && gameStatus === 'playing' && (
           <p key={levelCallout.level} className="level-callout">{levelCallout.message}</p>
@@ -1510,6 +1554,14 @@ function RaycastGame() {
       </section>
       <footer className="game-footer">
           <p>W/S ELLER ↑/↓ GÅ <span>A/D ELLER ←/→ SVÄNG</span><span>MELLANSLAG SKJUT</span><span>SHIFT+TAB NÄSTA NIVÅ</span></p>
+        <div className="audio-controls" aria-label="Ljudinställningar">
+          <button type="button" aria-pressed={musicEnabled} onClick={toggleMusic}>
+            MUSIK {musicEnabled ? 'PÅ' : 'AV'}
+          </button>
+          <button type="button" aria-pressed={soundEffectsEnabled} onClick={toggleSoundEffects}>
+            LJUD {soundEffectsEnabled ? 'PÅ' : 'AV'}
+          </button>
+        </div>
         <div className="touch-controls" aria-label="Pekkontroller">
           {[
             ['arrowleft', 'SVÄNG VÄNSTER'], ['arrowup', 'FRAMÅT'],

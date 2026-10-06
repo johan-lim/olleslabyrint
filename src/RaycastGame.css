@@ -46,12 +46,6 @@
   box-shadow: 0 0 22px rgba(198, 255, 74, 0.13);
 }
 .game-canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
-.scanlines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,0,0,.18) 3px, rgba(0,0,0,.18) 5px);
-}
 .game-state-overlay {
   position: absolute;
   z-index: 5;
@@ -231,14 +225,23 @@
 .minimap-player-sprite { filter: drop-shadow(0 0 0.18px #ffb800); }
 .game-footer { align-items: center; }
 .game-footer span { margin-left: 18px; color: var(--warning); }
-.touch-controls { display: none; gap: 6px; }
+.audio-controls { display: flex; gap: 6px; margin-left: auto; }
+.audio-controls button,
 .touch-controls button {
-  min-height: 44px;
+  min-height: 36px;
+  padding: 5px 10px;
   border: 1px solid var(--signal);
   border-radius: 0;
   background: #000;
   color: var(--signal);
   font: inherit;
+  cursor: pointer;
+}
+.audio-controls button[aria-pressed="true"] { background: var(--signal); color: #000; }
+.audio-controls button:focus-visible { outline: 2px solid var(--warning); outline-offset: 2px; }
+.touch-controls { display: none; gap: 6px; }
+.touch-controls button {
+  min-height: 44px;
   touch-action: none;
 }
 .touch-controls button:active { background: var(--signal); color: #000; }
@@ -247,6 +250,7 @@
   .raycaster-shell { width: calc(100% - 16px); padding: 8px 0; gap: 8px; }
   .game-footer { display: block; }
   .game-footer > p { display: none; }
+  .audio-controls { justify-content: flex-end; margin: 0 0 6px; }
   .touch-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); }
   .minimap { width: 136px; }
   .inventory { width: 64px; }
